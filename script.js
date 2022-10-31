@@ -1,6 +1,6 @@
 // // constances
 const canvas = document.getElementById('screen');
-document.getElementById("verLog").innerHTML = "Ver:"+6
+document.getElementById("verLog").innerHTML = "Ver:"+7
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
 });
@@ -461,72 +461,72 @@ class deco {
 	}
 }
 
-// // varibles
-// var oldCycleTime = 0;
-// var cycleCount = 0;
-// var fps_rate = '...';
-// var mouse =  new vector2();
-// var mapSize = new vector2(10,10);
-// var map = new Grid(mapSize,0)
-// var roomSize = new vector2(WIDTH,HEIGHT);
-// var player = new Player()
-// var floor = 1
-// var roomsAmt = floor*3
-// var holes = range(mapSize.x * mapSize.y - roomsAmt - 3 ,mapSize.x * mapSize.y - roomsAmt );
-// var atempts = 0
-// var nextRoom = null
-// var lastRoom = null
-// var stop = 0
-// var endRoom = 0
-// var def = true
-// var camOffset = new vector2()
-// var zoom = 0
-// var bullets = []
-// var keys = []
-// var shootCount = 0
-// var shootLimit = 60
-// var db = false
-// var shake = 0
-// var curShake = 0
-// var enemys = []
-// var mapOffset = new vector2()
-// var MaxDash = roomSize.x/10
-// var look = 0
-// var plrX = 0
-// var plrY = 0
-// var menu = true
+// varibles
+var oldCycleTime = 0;
+var cycleCount = 0;
+var fps_rate = '...';
+var mouse =  new vector2();
+var mapSize = new vector2(10,10);
+var map = new Grid(mapSize,0)
+var roomSize = new vector2(WIDTH,HEIGHT);
+var player = new Player()
+var floor = 1
+var roomsAmt = floor*3
+var holes = range(mapSize.x * mapSize.y - roomsAmt - 3 ,mapSize.x * mapSize.y - roomsAmt );
+var atempts = 0
+var nextRoom = null
+var lastRoom = null
+var stop = 0
+var endRoom = 0
+var def = true
+var camOffset = new vector2()
+var zoom = 0
+var bullets = []
+var keys = []
+var shootCount = 0
+var shootLimit = 60
+var db = false
+var shake = 0
+var curShake = 0
+var enemys = []
+var mapOffset = new vector2()
+var MaxDash = roomSize.x/10
+var look = 0
+var plrX = 0
+var plrY = 0
+var menu = true
 
-// // events
-// {
-// 	document.addEventListener("click", (event) => {
-// 	  if (menu) {
-// 			if (canvas.height/2-30<event.y && event.y<canvas.height/2+30 && canvas.width/2-100<event.x && event.x<canvas.width/2+100) {	
-// 				menu = !menu
-// 			}
-// 		} else {
-//       var di = 9999999999
-// 			var a = 0
-// 			for (let v of range(1,4)) {
-// 		    let o = new vector2()
+// events
+{
+	document.addEventListener("click", (event) => {
+	  if (menu) {
+			if (canvas.height/2-30<event.y && event.y<canvas.height/2+30 && canvas.width/2-100<event.x && event.x<canvas.width/2+100) {	
+				menu = !menu
+			}
+		} else {
+      var di = 9999999999
+			var a = 0
+			for (let v of range(1,4)) {
+		    let o = new vector2()
 		    
-// 		    if (v==1){
-// 		        o.y -= 5
-// 		    }if (v==2){
-// 		       o.x += 5
-// 		    }if (v==3){
-// 		        o.y += 5
-// 		    }if (v==4){
-// 		        o.x -= 5
-// 		    }
+		    if (v==1){
+		        o.y -= 5
+		    }if (v==2){
+		       o.x += 5
+		    }if (v==3){
+		        o.y += 5
+		    }if (v==4){
+		        o.x -= 5
+		    }
 		    
-// 		    if (distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse) <= di) {
-// 		        di = distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse)
-// 		        a = v
-// 		    }
-// 			}
-// 			if (!db) {db = true; bullets.push(new bullet(a,"player")); curShake += 1} 
-// 		}
-// 	});
+		    if (distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse) <= di) {
+		        di = distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse)
+		        a = v
+		    }
+			}
+			if (!db) {db = true; bullets.push(new bullet(a,"player")); curShake += 1} 
+		}
+	});
 
 // 	document.addEventListener("mousemove", (event) => {
 // 		mouse.x = event.x
