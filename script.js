@@ -1,6 +1,6 @@
 // // constances
 const canvas = document.getElementById('screen');
-document.getElementById("verLog").innerHTML = "Ver:"+7
+document.getElementById("verLog").innerHTML = "Ver:"+8
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
 });
@@ -528,45 +528,45 @@ var menu = true
 		}
 	});
 
-// 	document.addEventListener("mousemove", (event) => {
-// 		mouse.x = event.x
-// 		mouse.y = event.y
-// 		def = true
-// 	});
+	document.addEventListener("mousemove", (event) => {
+		mouse.x = event.x
+		mouse.y = event.y
+		def = true
+	});
 
-// 	window.addEventListener("keydown",
-//     function(e){
-//       keys[e.keyCode] = true;
-// 			if (e.keyCode == 27) {
-// 				menu = !menu
-// 			}
-//     },
-//   false);
+	window.addEventListener("keydown",
+    function(e){
+      keys[e.keyCode] = true;
+			if (e.keyCode == 27) {
+				menu = !menu
+			}
+    },
+  false);
 
-// 	window.addEventListener('keyup',
-// 	    function(e){
-// 	        keys[e.keyCode] = false;
-// 	        if (e.keyCode == 69 && !menu) {
-// 				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
-// 				for (let i = 1; i <= MaxDash; i++) {
-// 					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
-// 					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
-// 					var data = context.getImageData(rayX,rayY, 1, 1).data;
-// 					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-// 						player.position.x += Math.sin(look)*(i-1)
-// 						player.position.y += Math.cos(look)*(i-1)
-// 						break
-// 					} else {
-// 						if (i==MaxDash) {
-// 							player.position.x += Math.sin(look)*(MaxDash)
-// 							player.position.y += Math.cos(look)*(MaxDash)
-// 						}
-// 					}
-// 				}
-// 			}
-// 	    },
-// 	false);
-// }
+	window.addEventListener('keyup',
+	    function(e){
+	        keys[e.keyCode] = false;
+	        if (e.keyCode == 69 && !menu) {
+				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
+				for (let i = 1; i <= MaxDash; i++) {
+					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
+					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
+					var data = context.getImageData(rayX,rayY, 1, 1).data;
+					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+						player.position.x += Math.sin(look)*(i-1)
+						player.position.y += Math.cos(look)*(i-1)
+						break
+					} else {
+						if (i==MaxDash) {
+							player.position.x += Math.sin(look)*(MaxDash)
+							player.position.y += Math.cos(look)*(MaxDash)
+						}
+					}
+				}
+			}
+	    },
+	false);
+}
 
 // // functions
 // function enemyType(flor) {
