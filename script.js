@@ -1,6 +1,6 @@
 // // constances
 const canvas = document.getElementById('screen');
-const pThing = document.getElementById("verLog");
+document.getElementById("verLog").innerHTML = "Ver:"+5
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
 });
