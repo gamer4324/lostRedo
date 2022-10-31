@@ -1,31 +1,32 @@
 // // constances
-// const canvas = document.getElementById('screen');
-// const context = canvas.getContext('2d',{
-//   willReadFrequently: true,
-// });
-// const WIDTH = 400;
-// const HEIGHT = 400;
-// const DOUBLE_PI = 2 * Math.PI;
-// const HALF_PI = Math.PI/2;
-// const FPS = 60;
-// const cycleDelay = Math.floor(1000 / FPS);
-// const roomBoarder = 0.05;
-// // images
-// var base_image = new Image();
-// base_image.src = "assests/images/exit.png";
+const canvas = document.getElementById('screen');
+const pThing = document.getElementById("verLog");
+const context = canvas.getContext('2d',{
+  willReadFrequently: true,
+});
+const WIDTH = 400;
+const HEIGHT = 400;
+const DOUBLE_PI = 2 * Math.PI;
+const HALF_PI = Math.PI/2;
+const FPS = 60;
+const cycleDelay = Math.floor(1000 / FPS);
+const roomBoarder = 0.05;
+// images
+var base_image = new Image();
+base_image.src = "assests/images/exit.png";
 
-// var startInfo = new Image()
-// startInfo.src = "assests/images/start.png";
-// var startInfo2 = new Image()
-// startInfo2.src = "assests/images/start2.png";
+var startInfo = new Image()
+startInfo.src = "assests/images/start.png";
+var startInfo2 = new Image()
+startInfo2.src = "assests/images/start2.png";
 
-// var imgages = 1
-// var decorationImages = []
-// for (let img = 1; img <= imgages; img++) {
-// 	var curImage = new Image();
-// 	curImage.src = "assests/decorations/"+img+".png";
-// 	decorationImages.push(curImage)
-// }
+var imgages = 1
+var decorationImages = []
+for (let img = 1; img <= imgages; img++) {
+	var curImage = new Image();
+	curImage.src = "assests/decorations/"+img+".png";
+	decorationImages.push(curImage)
+}
 
 // //classes
 // class runner {
