@@ -1,4 +1,4 @@
-// // constances
+// constances
 const canvas = document.getElementById('screen');
 document.getElementById("verLog").innerHTML = "Ver:"+8
 const context = canvas.getContext('2d',{
@@ -568,7 +568,7 @@ var menu = true
 	false);
 }
 
-// // functions
+// functions
 function enemyType(flor) {
 	if (flor <= 10) {
 		if (Math.floor(1.5848931924611136**flor) == randInt(Math.floor(1.5848931924611136**flor),100)) {
