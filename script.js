@@ -1028,5 +1028,6 @@ function gameLoop() {
 }
 window.onload = function() {
 	gen(); 
+	gameLoop()
 	console.log("loaded"); 
 }
