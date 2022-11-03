@@ -1,6 +1,5 @@
 // constances
 const canvas = document.getElementById('screen');
-document.getElementById("verLog").innerHTML = "Ver:"+8
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
 });
@@ -600,7 +599,7 @@ function enterRoom(room) {
 		let dif = enemyType(floor)
 		if (dif == 1) {
 			for (let v = 1; v <= floor;) {
-				v+=10
+				v+=1
 				var a = randInt(1,3)
 				if (a == 1) {
 					enemys.push(new ghost())
@@ -1025,6 +1024,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText('FPS: ' + fps_rate, 0, 50);
+	context.fillText("Ver:"+9, 0, 100);
 }
 window.onload = function() {
 	gen(); 
