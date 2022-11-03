@@ -128,7 +128,7 @@ class sheilder {
 		this.img = new Image();
 		this.img.src = "assests/enemys/runner.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
-		this.countLimti = randInt(30,90)
+		this.countLimti = randInt(50,250)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
 		this.sheild = false
 		this.anggle = 0
@@ -140,6 +140,7 @@ class sheilder {
 		if (this.count >= this.countLimti) this.count = 0;
 		if (this.count % this.countLimti == 0) {
 			this.sheild = !this.sheild
+			this.anggle = Math.atan2(player.position.x-this.position.x,player.position.y-this.position.y)-Math.PI/2
 			if (this.sheild == true) {
 				this.speed /= 2
 			} else {
@@ -148,7 +149,6 @@ class sheilder {
 		}
 		if (this.sheild == true) { 
 
-			this.anggle = Math.atan2(player.position.x-this.position.x,player.position.y-this.position.y)-Math.PI/2
 			context.beginPath();
 	    context.strokeStyle = "#0000000";
 	    context.arc((this.position.x + mapOffset.x),(this.position.y + mapOffset.y),roomSize.x/20*2,-this.anggle-Math.PI/4,-this.anggle+Math.PI/4);
