@@ -35,6 +35,7 @@ class runner {
 		this.img = new Image();
 		this.img.src = "assests/enemys/runner.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.teir = 1
 	}
 
 	update() {
@@ -58,6 +59,7 @@ class ghost {
 		this.img = new Image();
 		this.img.src = "assests/enemys/ghost.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.teir = 1
 	}
 
 	update() {
@@ -83,6 +85,7 @@ class shooter {
 		this.canShoot = false
 		this.shootLimti = randInt(30,90)
 		this.count = randInt(1,Math.floor(this.shootLimti/2))
+		this.teir = 1
 	}
 
 	update() {
@@ -129,6 +132,7 @@ class sheilder {
 		this.count = randInt(1,Math.floor(this.countLimti/2))
 		this.sheild = false
 		this.anggle = 0
+		this.teir = 2
 	}
 	
 	update() {
@@ -352,6 +356,7 @@ class Player {
 		this.vy = 0
 		this.maxHealth = 100
 		this.health = this.maxHealth
+		this.curency = 0
 	}
 }
 
@@ -439,6 +444,7 @@ class bullet {
 			for (let v in enemys) {
 				if (((this.position.x-enemys[v].position.x)**2+(this.position.y-enemys[v].position.y)**2)**0.5 <= roomSize.x/10) {
 					console.log("hit")
+					player.curency += enemys[v].teir**2
 					enemys.splice(v,1)
 					bullets.splice(pos,1)
 				}
@@ -611,7 +617,10 @@ function enterRoom(room) {
 			}
 		} if (dif == 2) {
 			for (let v = 1; v <= floor;) {
-				v+=10
+				if (v <= 10) {
+					v+=10
+				}
+				v+=1.1
 				var a = randInt(1,1)
 				if (a == 1) {
 					enemys.push(new sheilder())
@@ -1023,8 +1032,9 @@ function gameLoop() {
 	
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
-	context.fillText('FPS: ' + fps_rate, 0, 50);
+	context.fillText("Fps:"+fps_rate, 0, 50);
 	context.fillText("Ver:"+9, 0, 100);
+	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
 	gen(); 
