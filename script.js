@@ -247,23 +247,25 @@ class doger {
 		} else {
 			let a = 0
 			let b = 0
-			if (bullets[pos].direction <= 2) {
-				b = bullets[pos].direction + 2
-			} else {
-				b = bullets[pos].direction - 2
-			}
-			while (true) {
-				let rnd = randInt(1,4)
-				if (rnd != bullets[pos].direction & rnd != b) {
-					a = rnd
-					break
+			if (bullets[pos]) {
+				if (bullets[pos].direction <= 2) {
+					b = bullets[pos].direction + 2
+				} else {
+					b = bullets[pos].direction - 2
 				}
+				while (true) {
+					let rnd = randInt(1,4)
+					if (rnd != bullets[pos].direction & rnd != b) {
+						a = rnd
+						break
+					}
+				}
+				if (a==1) this.vel.y += 10
+				if (a==2) this.vel.x -= 10
+				if (a==3) this.vel.y -= 10
+				if (a==4) this.vel.x += 10
+				bullets.splice(pos,1)	
 			}
-			if (a==1) this.vel.y += 10
-			if (a==2) this.vel.x -= 10
-			if (a==3) this.vel.y -= 10
-			if (a==4) this.vel.x += 10
-			bullets.splice(pos,1)
 		}
 	}
 }
@@ -995,6 +997,8 @@ function gameLoop() {
 			
 			player.move = 0
 			player.strafe = 0
+			player.vx = lerp(player.vx,0,0.05)
+			player.vy = lerp(player.vy,0,0.05)
 
 			if (keys[87]) player.move += 1
 			if (keys[83]) player.move -= 1
@@ -1038,19 +1042,20 @@ function gameLoop() {
 				}
 			}
 
-			player.vx = lerp(player.vx,0,0.05)
-			player.vy = lerp(player.vy,0,0.05)
-
-			player.position.x += player.vx
-			var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
-			if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-				player.position.x -= player.vx
+			if (Math.abs(player.vx > 0.01)) {
+				player.position.x += player.vx
+				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
+				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+					player.position.x -= player.vx
+				}
 			}
 
-			player.position.y += player.vy
-			var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
-			if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-				player.position.y -= player.vy
+			if (Math.abs(player.vx > 0.01)) {
+				player.position.y += player.vy
+				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
+				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+					player.position.y -= player.vy
+				}
 			}
 
 			if (player.move != 0){
@@ -1060,8 +1065,8 @@ function gameLoop() {
 				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
 					player.position.y += player.move / 16 * player.speed
 				}
-
-			} if (player.strafe != 0) {
+			} 
+			if (player.strafe != 0) {
 				player.position.x += player.strafe / 16 * player.speed
 
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
@@ -1127,7 +1132,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+10, 0, 100);
+	context.fillText("Ver:"+11, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
