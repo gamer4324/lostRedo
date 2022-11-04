@@ -52,7 +52,7 @@ class runner {
 	}
 
 	hit(pos,v) {
-		console.log("hit")
+		
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -81,7 +81,7 @@ class ghost {
 	}
 
 	hit(pos,v) {
-		console.log("hit")
+		
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -135,7 +135,7 @@ class shooter {
 	}
 
 	hit(pos,v) {
-		console.log("hit")
+		
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -192,10 +192,79 @@ class sheilder {
 	}
 
 	hit(pos,v) {
-		console.log("hit")
+		
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
+	}
+}
+
+class doger {
+	constructor () {
+		this.speed = player.speed*0.7*(randInt(800,1200)/1000)*2
+		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.img = new Image();
+		this.img.src = "assests/enemys/runner.png";
+		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.teir = 1
+		this.vel = new vector2(0,0)
+	}
+
+	update() {
+		this.vel.x = lerp(this.vel.x,0,0.05)
+		this.vel.y = lerp(this.vel.y,0,0.05)
+
+		this.position.x += this.vel.x
+		var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
+		if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+			this.position.x -= this.vel.x
+		}
+
+		this.position.y += this.vel.y
+		var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
+		if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+			this.position.y -= this.vel.y
+		}
+
+		if (((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 >= (this.size.y+this.size.x)/2) {
+			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
+			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
+		} else {
+			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			curShake = 1
+			player.health -= 1
+		}
+		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+		
+	}
+
+	hit(pos,v) {
+		if (randInt(1,3)==3) {
+			player.curency += enemys[v].teir**2
+			enemys.splice(v,1)
+			bullets.splice(pos,1)
+		} else {
+			let a = 0
+			let b = 0
+			if (bullets[pos].direction <= 2) {
+				b = bullets[pos].direction + 2
+			} else {
+				b = bullets[pos].direction - 2
+			}
+			while (true) {
+				let rnd = randInt(1,4)
+				if (rnd != bullets[pos].direction & rnd != b) {
+					a = rnd
+					break
+				}
+			}
+			if (a==1) this.vel.y += 10
+			if (a==2) this.vel.x -= 10
+			if (a==3) this.vel.y -= 10
+			if (a==4) this.vel.x += 10
+			bullets.splice(pos,1)
+		}
 	}
 }
 
@@ -644,9 +713,11 @@ function enterRoom(room) {
 					v+=10
 				}
 				v+=1.1
-				var a = randInt(1,1)
+				var a = randInt(1,2)
 				if (a == 1) {
 					enemys.push(new sheilder())
+				}if (a == 2) {
+					enemys.push(new doger())
 				}
 			}
 		}
