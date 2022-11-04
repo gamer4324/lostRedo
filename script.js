@@ -50,6 +50,13 @@ class runner {
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
+
+	hit(pos,v) {
+		console.log("hit")
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
+	}
 }
 
 class ghost {
@@ -71,6 +78,13 @@ class ghost {
 			player.health -= 1.5
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	hit(pos,v) {
+		console.log("hit")
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
 	}
 }
 
@@ -118,6 +132,13 @@ class shooter {
 			bullets[a-1].position.y = this.position.y
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	hit(pos,v) {
+		console.log("hit")
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
 	}
 }
 
@@ -168,6 +189,13 @@ class sheilder {
 			player.health -= 1
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	hit(pos,v) {
+		console.log("hit")
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
 	}
 }
 
@@ -443,15 +471,10 @@ class bullet {
 		if (this.type == "player") {
 			for (let v in enemys) {
 				if (((this.position.x-enemys[v].position.x)**2+(this.position.y-enemys[v].position.y)**2)**0.5 <= roomSize.x/10) {
-					console.log("hit")
-					player.curency += enemys[v].teir**2
-					enemys.splice(v,1)
-					bullets.splice(pos,1)
+					enemys[v].hit(pos,v)
 				}
 			}
 		}
-
-		
 	}
 }
 
@@ -809,7 +832,7 @@ function gen() {
 		}
 	}
 	endRoom = lastRoom;
-	document.title = "done"
+	// document.title = "done"
 	def = false
 	atempts = 0;
 }
