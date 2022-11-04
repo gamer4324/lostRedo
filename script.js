@@ -30,7 +30,7 @@ for (let img = 1; img <= imgages; img++) {
 //classes
 class runner {
 	constructor () {
-		this.speed = player.speed*0.7*(randInt(800,1200)/1000)
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/runner.png";
@@ -61,7 +61,7 @@ class runner {
 
 class ghost {
 	constructor () {
-		this.speed = player.speed*0.7*(randInt(800,1200)/1000)
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/ghost.png";
@@ -90,7 +90,7 @@ class ghost {
 
 class shooter {
 	constructor () {
-		this.speed = player.speed*0.7*(randInt(800,1200)/1000)
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.side = randInt(1,4)
 		this.img = new Image();
@@ -144,7 +144,7 @@ class shooter {
 
 class blocker {
 	constructor () {
-		this.speed = player.speed*0.7*(randInt(800,1200)/1000)
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/blocker.png";
@@ -201,7 +201,7 @@ class blocker {
 
 class doger {
 	constructor () {
-		this.speed = player.speed*0.7*(randInt(800,1200)/1000)*2
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*2
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/doger.png";
@@ -1132,7 +1132,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+11, 0, 100);
+	context.fillText("Ver:"+12, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
