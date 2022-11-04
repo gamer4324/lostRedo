@@ -142,12 +142,12 @@ class shooter {
 	}
 }
 
-class sheilder {
+class blocker {
 	constructor () {
 		this.speed = player.speed*0.7*(randInt(800,1200)/1000)
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
-		this.img.src = "assests/enemys/runner.png";
+		this.img.src = "assests/enemys/blocker.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
 		this.countLimti = randInt(50,250)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
@@ -204,7 +204,7 @@ class doger {
 		this.speed = player.speed*0.7*(randInt(800,1200)/1000)*2
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
-		this.img.src = "assests/enemys/runner.png";
+		this.img.src = "assests/enemys/doger.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
 		this.teir = 1
 		this.vel = new vector2(0,0)
@@ -717,7 +717,7 @@ function enterRoom(room) {
 				v+=1.1
 				var a = randInt(1,2)
 				if (a == 1) {
-					enemys.push(new sheilder())
+					enemys.push(new blocker())
 				}if (a == 2) {
 					enemys.push(new doger())
 				}
