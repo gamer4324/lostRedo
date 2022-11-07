@@ -598,9 +598,9 @@ var menuState = 1
 // events
 {
 	document.addEventListener("click", (event) => {
-	  if (menu) {
+	  if (menuState != 0) {
 			if (canvas.height/2-30<event.y && event.y<canvas.height/2+30 && canvas.width/2-100<event.x && event.x<canvas.width/2+100) {	
-				menu = !menu
+				menuState == 0
 			}
 		} else {
       var di = 9999999999
@@ -649,7 +649,7 @@ var menuState = 1
 	window.addEventListener('keyup',
 	    function(e){
 	        keys[e.keyCode] = false;
-	        if (e.keyCode == 69 && !menu) {
+	        if (e.keyCode == 69 && menuState == 0) {
 				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
 				for (let i = 1; i <= MaxDash; i++) {
 					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
@@ -929,7 +929,7 @@ function gameLoop() {
 	// 1) menu
 	// 0) playing
 	// 2) paused
-	
+
 	if (menuState == 1) {
 		context.fillStyle = "#3D3D90";
 		context.fillRect(0,0,canvas.width,canvas.height)
@@ -1144,6 +1144,22 @@ function gameLoop() {
 		
 		context.fillStyle = "#1D3F6E";
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
+
+		if (mouse.x >= canvas.width/2-500 &&
+		   mouse.x <= canvas.width/2+500) {
+			scrollMenu2 = mouse.x
+		}
+
+		
+		context.fillStyle = "#000000";
+		context.beginPath();
+		context.arc(scrollMenu2+roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
+		context.arc(scrollMenu2-roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
+		context.moveTo(scrollMenu2-roomSize.x/25,canvas.height/2+195+roomSize.x/40)
+		context.lineTo(scrollMenu2,canvas.height/2+160+roomSize.x/20)
+		context.lineTo(scrollMenu2+roomSize.x/25,canvas.height/2+195+roomSize.x/40)
+		context.fill();
+		context.fillRect(scrollMenu2-roomSize.x/60,canvas.height/2+195-roomSize.x/20+roomSize.x/20,roomSize.x/36,roomSize.x/20)
 
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
