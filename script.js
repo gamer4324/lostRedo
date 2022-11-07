@@ -593,7 +593,7 @@ var MaxDash = roomSize.x/10
 var look = 0
 var plrX = 0
 var plrY = 0
-var menu = true
+var menuState = 1
 
 // events
 {
@@ -637,7 +637,11 @@ var menu = true
     function(e){
       keys[e.keyCode] = true;
 			if (e.keyCode == 27) {
-				menu = !menu
+				if (menuState == 0) {
+					menuState = 2
+				} else {
+					menuState = 0
+				}
 			}
     },
   false);
@@ -922,24 +926,33 @@ function gameLoop() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	
-	if (menu) {
+	// 1) menu
+	// 0) playing
+	// 2) paused
+	
+	if (menuState == 1) {
 		context.fillStyle = "#3D3D90";
 		context.fillRect(0,0,canvas.width,canvas.height)
 		
 		context.fillStyle = "#1D3F6E";
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
-	} else {
+
+		context.fillStyle = '#ffffff';
+		context.font = '50px Monospace';
+		context.fillText("Menu", 0, 200);
+	} else if (menuState == 0){
 		//health handler
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
 			player.health+=player.maxHealth/1000
 		} 
 		if (player.health <= 0) {
-			menu = !menu
+			menuState = 1
 			player.health = player.maxHealth
 			floor = 1
 			enemys = []
 			bullets = []
 			endRoom = 0
+			player.curency = 0
 			player.vx = 0
 			player.vy = 0 
 			gen()
@@ -1125,6 +1138,16 @@ function gameLoop() {
 		context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, zoom, 0, 2 * Math.PI);
 		context.rect(canvas.width, 0,-canvas.width,canvas.height);
 		context.fill();
+	} else if (menuState == 2){
+		context.fillStyle = "#3D3D90";
+		context.fillRect(0,0,canvas.width,canvas.height)
+		
+		context.fillStyle = "#1D3F6E";
+		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
+
+		context.fillStyle = '#ffffff';
+		context.font = '50px Monospace';
+		context.fillText("Paused", 0, 200);
 	}
 
 	setTimeout(gameLoop, cycleDelay);
@@ -1132,7 +1155,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+12, 0, 100);
+	context.fillText("Ver:"+13, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
