@@ -7,8 +7,6 @@ const WIDTH = 400;
 const HEIGHT = 400;
 const DOUBLE_PI = 2 * Math.PI;
 const HALF_PI = Math.PI/2;
-const FPS = 60;
-const cycleDelay = Math.floor(1000 / FPS);
 const roomBoarder = 0.05;
 // images
 var base_image = new Image();
@@ -561,6 +559,8 @@ class deco {
 }
 
 // varibles
+var FPS = 60;
+var cycleDelay = Math.floor(1000 / FPS);
 var oldCycleTime = 0;
 var cycleCount = 0;
 var fps_rate = '...';
@@ -674,6 +674,11 @@ var scrollMenu2 = 0
 }
 
 // functions
+function change_fps(Nfps) {
+	FPS = Nfps;
+	cycleDelay = Math.floor(1000 / Nfps);
+}
+
 function enemyType(flor) {
 	if (flor <= 10) {
 		if (Math.floor(1.5848931924611136**flor) == randInt(Math.floor(1.5848931924611136**flor),100)) {
@@ -718,7 +723,7 @@ function enterRoom(room) {
 		} if (dif == 2) {
 			for (let v = 1; v <= floor;) {
 				if (v <= 10) {
-					v+=10
+					v+=2
 				}
 				v+=1.1
 				var a = randInt(1,2)
@@ -1180,7 +1185,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+14, 0, 100);
+	context.fillText("Ver:"+15, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
