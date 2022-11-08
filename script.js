@@ -602,7 +602,7 @@ var scrollMenu2 = 0
 	document.addEventListener("click", (event) => {
 	  if (menuState != 0) {
 			if (canvas.height/2-30<event.y && event.y<canvas.height/2+30 && canvas.width/2-100<event.x && event.x<canvas.width/2+100) {	
-				menuState == 0
+				menuState = 0
 			}
 		} else {
       var di = 9999999999
@@ -1180,7 +1180,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+13, 0, 100);
+	context.fillText("Ver:"+14, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
