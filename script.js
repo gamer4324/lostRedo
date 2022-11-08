@@ -594,6 +594,8 @@ var look = 0
 var plrX = 0
 var plrY = 0
 var menuState = 1
+var scrollMenu1 = 0 
+var scrollMenu2 = 0 
 
 // events
 {
@@ -1145,11 +1147,18 @@ function gameLoop() {
 		context.fillStyle = "#1D3F6E";
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
 
-		if (mouse.x >= canvas.width/2-500 &&
-		   mouse.x <= canvas.width/2+500) {
-			scrollMenu2 = mouse.x
+		context.fillStyle = "#1D3F6E";
+		context.fillRect(canvas.width/2-500,canvas.height/2+195+roomSize.x/1000,1000,-100)
+
+		if (mouse.x >= canvas.width/2-500 && mouse.x <= canvas.width/2+500) {
+			scrollMenu1 = mouse.x
+		} else if(mouse.x >= canvas.width/2-500) {
+			scrollMenu1 = canvas.width/2+500
+		} else if(mouse.x <= canvas.width/2+500) {
+			scrollMenu1 = canvas.width/2-500
 		}
 
+		scrollMenu2 = lerp(scrollMenu2,scrollMenu1,0.2)
 		
 		context.fillStyle = "#000000";
 		context.beginPath();
