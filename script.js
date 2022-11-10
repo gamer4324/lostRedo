@@ -44,7 +44,7 @@ class runner {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			curShake = 1
-			player.health -= 1
+			player.health -= 2
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
@@ -533,7 +533,7 @@ class bullet {
 
 		if (this.type == "enemy" && ((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 <= roomSize.x/10) {
 			curShake = 1
-			player.health -= 5
+			player.health -= 25
 			bullets.splice(pos,1)
 		}
 
@@ -597,9 +597,9 @@ var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
 var shopItems = [
-	{name:"test1",price:5,timesBought:0},
-	{name:"test2",price:5,timesBought:1},
-	{name:"test3",price:5,timesBought:2}
+	{name:"Max Health",price:1,timesBought:0},
+	{name:"Shoot speed",price:5,timesBought:0},
+	{name:"Walk speed",price:2,timesBought:0}
 ] 
 
 // events
@@ -608,6 +608,24 @@ var shopItems = [
 	  if (menuState != 0) {
 			if (canvas.height/2-30<event.y && event.y<canvas.height/2+30 && canvas.width/2-100<event.x && event.x<canvas.width/2+100) {	
 				menuState = 0
+			}
+			if (menuState == 2) {
+				for (let i = 1; i <= shopItems.length; i++) {
+			    if (mouse.x - (canvas.width/2-500) < i * (1000/shopItems.length) ) {
+			    	if (player.curency >= shopItems[i-1].price*(shopItems[i-1].timesBought+1)) {
+			        player.curency -= shopItems[i-1].price*(shopItems[i-1].timesBought+1)
+			        shopItems[i-1].timesBought++
+			        if (i == 1) {
+			        	player.maxHealth += 25
+			        } else if (i == 2) {
+			        	shootLimit -= 5
+			        } else if (i == 3) {
+			        	player.speed += 10
+			        }
+							break
+			    	}
+			    }
+				} 
 			}
 		} else {
       var di = 9999999999
@@ -1030,10 +1048,10 @@ function gameLoop() {
 			if (keys[68]) player.strafe += 1
 			if (keys[65]) player.strafe -= 1
 
-			if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); curShake += 1}
-			if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); curShake += 1}
-			if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); curShake += 1}
-			if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); curShake += 1}
+			if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); curShake += 1;}
+			if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); curShake += 1;}
+			if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); curShake += 1;}
+			if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); curShake += 1;}
 
 			if (keys[32]) if (map.get(Math.floor(player.position.x / roomSize.x),Math.floor(player.position.y / roomSize.y)).roomData[1].length == 0) {
 				floor++; 
@@ -1172,12 +1190,12 @@ function gameLoop() {
 
 			context.fillStyle = '#000000';
 			context.font = '50px Monospace';
-			context.fillText(shopItem.name, p1.x+1000/len/2+3, p1.y-110/2+3);
-			context.fillText(shopItem.name, p1.x+1000/len/2+3, p1.y-110/2-3);
-			context.fillText(shopItem.name, p1.x+1000/len/2-3, p1.y-110/2+3);
-			context.fillText(shopItem.name, p1.x+1000/len/2-3, p1.y-110/2-3);
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2+3, p1.y-110/2+3);
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2+3, p1.y-110/2-3);
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2-3, p1.y-110/2+3);
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2-3, p1.y-110/2-3);
 			context.fillStyle = '#ffffff';
-			context.fillText(shopItem.name, p1.x+1000/len/2, p1.y-110/2);
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2, p1.y-110/2);
 
 			context.fillStyle = '#000000';
 			context.font = '40px Monospace';
@@ -1221,7 +1239,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+16, 0, 100);
+	context.fillText("Ver:"+18, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
