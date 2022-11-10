@@ -596,6 +596,11 @@ var plrY = 0
 var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
+var shopItems = [
+	{name:"test1",price:5,timesBought:0},
+	{name:"test2",price:5,timesBought:1},
+	{name:"test3",price:5,timesBought:2}
+] 
 
 // events
 {
@@ -745,7 +750,7 @@ function lerpV2(val1,val2,amt) {
 function lerp(val1,val2,amt) {
 	let final = (1 - amt) * val1 + amt * val2
 	return final
-}
+};
 
 function range(start, end) {
     var ans = [];
@@ -1153,7 +1158,38 @@ function gameLoop() {
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
 
 		context.fillStyle = "#1D3F6E";
-		context.fillRect(canvas.width/2-500,canvas.height/2+195+roomSize.x/1000,1000,-100)
+		context.fillRect(canvas.width/2-500,canvas.height/2+195,1000,-100)
+
+		for (let v in shopItems) {
+			let shopItem = shopItems[v]
+			let len = shopItems.length
+			let p1 = new vector2(canvas.width/2-500+1000/len*v,canvas.height/2+195)
+
+			context.fillStyle = "#1a457a"
+			context.fillRect(p1.x+5,p1.y-5,1000/len-10,-90)
+
+			context.textAlign = "center"
+
+			context.fillStyle = '#000000';
+			context.font = '50px Monospace';
+			context.fillText(shopItem.name, p1.x+1000/len/2+3, p1.y-110/2+3);
+			context.fillText(shopItem.name, p1.x+1000/len/2+3, p1.y-110/2-3);
+			context.fillText(shopItem.name, p1.x+1000/len/2-3, p1.y-110/2+3);
+			context.fillText(shopItem.name, p1.x+1000/len/2-3, p1.y-110/2-3);
+			context.fillStyle = '#ffffff';
+			context.fillText(shopItem.name, p1.x+1000/len/2, p1.y-110/2);
+
+			context.fillStyle = '#000000';
+			context.font = '40px Monospace';
+			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2+2, p1.y-40/2+2);
+			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2+2, p1.y-40/2-2);
+			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2-2, p1.y-40/2+2);
+			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2-2, p1.y-40/2-2);
+			context.fillStyle = '#ffffff';
+			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2, p1.y-40/2);
+
+			context.textAlign = "start"
+		}
 
 		if (mouse.x >= canvas.width/2-500 && mouse.x <= canvas.width/2+500) {
 			scrollMenu1 = mouse.x
@@ -1185,7 +1221,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+15, 0, 100);
+	context.fillText("Ver:"+16, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
