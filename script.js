@@ -1238,7 +1238,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+18, 0, 100);
+	context.fillText("Ver:"+19, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
