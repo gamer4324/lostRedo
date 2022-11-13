@@ -583,7 +583,7 @@ var zoom = 0
 var bullets = []
 var keys = []
 var shootCount = 0
-var shootLimit = 60
+var shootLimit = 61
 var db = false
 var shake = 0
 var curShake = 0
@@ -597,9 +597,9 @@ var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
 var shopItems = [
-	{name:"Max Health",price:1,timesBought:0},
-	{name:"Shoot speed",price:5,timesBought:0},
-	{name:"Walk speed",price:2,timesBought:0}
+{name:"Max Health",price:1,timesBought:0,max:36},
+{name:"Shoot speed",price:5,timesBought:0,max:12},
+{name:"Walk speed",price:2,timesBought:0,max:16}
 ] 
 
 // events
@@ -612,7 +612,7 @@ var shopItems = [
 			if (menuState == 2) {
 				for (let i = 1; i <= shopItems.length; i++) {
 			    if (mouse.x - (canvas.width/2-500) < i * (1000/shopItems.length) ) {
-			    	if (player.curency >= shopItems[i-1].price*(shopItems[i-1].timesBought+1)) {
+			    	if (player.curency >= shopItems[i-1].price*(shopItems[i-1].timesBought+1) && shopItems[i-1].timesBought < shopItems[i-1].max) {
 			        player.curency -= shopItems[i-1].price*(shopItems[i-1].timesBought+1)
 			        shopItems[i-1].timesBought++
 			        if (i == 1) {
@@ -622,8 +622,8 @@ var shopItems = [
 			        } else if (i == 3) {
 			        	player.speed += 10
 			        }
-							break
 			    	}
+						break
 			    }
 				} 
 			}
@@ -1187,24 +1187,23 @@ function gameLoop() {
 			context.fillRect(p1.x+5,p1.y-5,1000/len-10,-90)
 
 			context.textAlign = "center"
-
-			context.fillStyle = '#000000';
-			context.font = '50px Monospace';
-			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2+3, p1.y-110/2+3);
-			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2+3, p1.y-110/2-3);
-			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2-3, p1.y-110/2+3);
-			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2-3, p1.y-110/2-3);
-			context.fillStyle = '#ffffff';
-			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2, p1.y-110/2);
-
-			context.fillStyle = '#000000';
+			context.miterLimit = 3
 			context.font = '40px Monospace';
-			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2+2, p1.y-40/2+2);
-			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2+2, p1.y-40/2-2);
-			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2-2, p1.y-40/2+2);
-			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2-2, p1.y-40/2-2);
-			context.fillStyle = '#ffffff';
-			context.fillText(shopItem.price*(shopItem.timesBought+1), p1.x+1000/len/2, p1.y-40/2);
+	   	context.strokeStyle = '#000000';
+			context.lineWidth = 8;
+			context.strokeText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2, p1.y-110/2);
+			context.fillStyle = 'white';
+			context.fillText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2, p1.y-110/2);
+			
+			context.font = '35px Monospace';
+			if (shopItem.timesBought < shopItem.max) {
+		    context.strokeText(shopItem.price*(shopItem.timesBought+1)+"$", p1.x+1000/len/2, p1.y-25/2);
+		    context.fillText(shopItem.price*(shopItem.timesBought+1)+"$", p1.x+1000/len/2, p1.y-25/2);
+			} else {
+		    context.strokeText("Max", p1.x+1000/len/2, p1.y-25/2);
+		    context.fillText("Max", p1.x+1000/len/2, p1.y-25/2);
+			}
+
 
 			context.textAlign = "start"
 		}
