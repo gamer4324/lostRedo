@@ -197,6 +197,53 @@ class blocker {
 	}
 }
 
+class controller {
+	constructor () {
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.img = new Image();
+		this.img.src = "assests/enemys/blocker.png";
+		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.countLimti = randInt(60,180)
+		this.count = randInt(1,Math.floor(this.countLimti/2))
+		this.state = false
+		this.teir = 3
+	}
+	
+	update() {
+		this.count++;
+		if (this.count >= this.countLimti) this.count = 0;
+		if (this.count % this.countLimti == 0) {
+			this.state = !this.state
+			if (this.state == true) {
+				player.speed /= 2
+				this.speed /= 2
+			} else {
+				player.speed *= 2
+				this.speed *= 2
+			}
+		}
+
+		//move and draw
+		if (((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 >= (this.size.y+this.size.x)/2) {
+			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
+			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
+		} else {
+			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			curShake = 1
+			player.health -= 1
+		}
+		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	hit(pos,v) {
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
+	}
+}
+
 class doger {
 	constructor () {
 		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*2
@@ -238,7 +285,7 @@ class doger {
 	}
 
 	hit(pos,v) {
-		if (randInt(1,3)==3) {
+		if (randInt(1,6)==6) {
 			player.curency += enemys[v].teir**2
 			enemys.splice(v,1)
 			bullets.splice(pos,1)
@@ -597,9 +644,9 @@ var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
 var shopItems = [
-{name:"Max Health",price:1,timesBought:0,max:36},
-{name:"Shoot speed",price:5,timesBought:0,max:12},
-{name:"Walk speed",price:2,timesBought:0,max:16}
+{name:"Max Health",price:2,timesBought:0,max:36},
+{name:"Shoot speed",price:10,timesBought:0,max:12},
+{name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
 
 // events
@@ -697,31 +744,24 @@ var shopItems = [
 }
 
 // functions
+function weighted_random(items, weights) {
+    let i;
+
+    for (i = 0; i < weights.length; i++)
+        weights[i] += weights[i - 1] || 0;
+    
+    let random = Math.random() * weights[weights.length - 1];
+    
+    for (i = 0; i < weights.length; i++)
+        if (weights[i] > random)
+            break;
+    
+    return items[i];
+}
+
 function change_fps(Nfps) {
 	FPS = Nfps;
 	cycleDelay = Math.floor(1000 / Nfps);
-}
-
-function enemyType(flor) {
-	if (flor <= 10) {
-		if (Math.floor(1.5848931924611136**flor) == randInt(Math.floor(1.5848931924611136**flor),100)) {
-			return 2
-		} else {
-			return 1
-		}
-	} else if (flor <= 20) {
-		if (Math.floor(1.5848931924611136**(flor-10)) == randInt(Math.floor(1.5848931924611136**(flor-10)),100)) {
-			return 3
-		} else {
-			return 2
-		}
-	}else if (flor <= 25) {
-		if (Math.floor(2.51188643150958**(flor-20)) == randInt(Math.floor(2.51188643150958**(flor-20)),100)) {
-			return 4
-		} else {
-			return 3
-		}
-	}  
 }
 
 function distance(pos1,pos2) {
@@ -730,10 +770,10 @@ function distance(pos1,pos2) {
 
 function enterRoom(room) {
 	if (room.roomData[1].length+room.roomData[2].length >= 2) {
-		let dif = enemyType(floor)
-		if (dif == 1) {
-			for (let v = 1; v <= floor;) {
-				v+=1
+		for (let vds = 1; vds<=floor; vds++) {
+			let chance = weighted_random(["common","rare","epic"],[100,100,100])
+			console.log(chance)
+			if (chance == "common") {
 				var a = randInt(1,3)
 				if (a == 1) {
 					enemys.push(new ghost())
@@ -742,18 +782,17 @@ function enterRoom(room) {
 				}if (a == 3) {
 					enemys.push(new runner())
 				}
-			}
-		} if (dif == 2) {
-			for (let v = 1; v <= floor;) {
-				if (v <= 10) {
-					v+=2
-				}
-				v+=1.1
+			} if (chance == "rare") {
 				var a = randInt(1,2)
 				if (a == 1) {
 					enemys.push(new blocker())
 				}if (a == 2) {
 					enemys.push(new doger())
+				}
+			} if (chance == "epic") {
+				var a = randInt(1,1)
+				if (a == 1) {
+					enemys.push(new controller())
 				}
 			}
 		}
@@ -1238,7 +1277,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+19, 0, 100);
+	context.fillText("Ver:"+20, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
