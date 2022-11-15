@@ -649,6 +649,7 @@ var shopItems = [
 {name:"Shoot speed",price:10,timesBought:0,max:12},
 {name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
+var chances = [100,0,0]
 
 // events
 {
@@ -745,6 +746,19 @@ var shopItems = [
 }
 
 // functions
+function nextFloor() {
+	floor++
+	if (floor<=5) {
+		chances[0]-=4
+		chances[1]+=4
+	}
+	zoom = 0 
+	enemys = []
+	bullets = []
+	gen();
+	curShake = 50;
+}
+
 function weighted_random(items, weights) {
     let i;
 
@@ -772,7 +786,7 @@ function distance(pos1,pos2) {
 function enterRoom(room) {
 	if (room.roomData[1].length+room.roomData[2].length >= 2) {
 		for (let vds = 1; vds<=floor; vds++) {
-			let chance = weighted_random(["common","rare","epic"],[100,100,100])
+			let chance = weighted_random(["common","rare","epic"],chances)
 			console.log(chance)
 			if (chance == "common") {
 				var a = randInt(1,3)
@@ -1094,12 +1108,7 @@ function gameLoop() {
 			if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); curShake += 1;}
 
 			if (keys[32]) if (map.get(Math.floor(player.position.x / roomSize.x),Math.floor(player.position.y / roomSize.y)).roomData[1].length == 0) {
-				floor++; 
-				zoom =0; 
-				enemys = []
-				bullets = []
-				gen();
-				curShake = 50;
+				nextFloor()
 			}
 
 			if (keys[69]) {
@@ -1278,7 +1287,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+21, 0, 100);
+	context.fillText("Ver:"+22, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 }
 window.onload = function() {
