@@ -184,7 +184,7 @@ class blocker {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			curShake = 1
-			player.health -= 1
+			player.health -= 5
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
@@ -199,7 +199,7 @@ class blocker {
 
 class controller {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*5
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/blocker.png";
@@ -229,10 +229,7 @@ class controller {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			curShake = 1
-			player.health -= 1
+			player.health = 0
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
@@ -279,7 +276,7 @@ class doger {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			curShake = 1
-			player.health -= 1
+			player.health -= 5
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 		
@@ -748,10 +745,47 @@ var chances = [100,0,0]
 // functions
 function nextFloor() {
 	floor++
-	if (floor<=5) {
-		chances[0]-=4
-		chances[1]+=4
+	if (floor==3) {
+		chances[0]=98
+		chances[1]=2
+	}if (floor==5) {
+		chances[0]=96
+		chances[1]=4
+	}if (floor==6) {
+		chances[0]=92
+		chances[1]=8
+	}if (floor==8) {
+		chances[0]=85
+		chances[1]=15
+	}if (floor=10) {
+		chances[0]=79
+		chances[1]=20
+		chances[2]=1
+	}if (floor=12) {
+		chances[0]=55
+		chances[1]=45
+	}if (floor=14) {
+		chances[0]=10
+		chances[1]=87
+		chances[2]=3
+	}if (floor=16) {
+		chances[0]=5
+		chances[1]=90
+		chances[2]=5
+	}if (floor=18) {
+		chances[1]=85
+		chances[2]=10
+	}if (floor=19) {
+		chances[1]=70
+		chances[2]=25
+	}if (floor=22) {
+		chances[1]=60
+		chances[2]=35
+	}if (floor=25) {
+		chances[1]=5
+		chances[2]=90
 	}
+	sessionStorage.setItem("weights", JSON.stringify(chances));
 	zoom = 0 
 	enemys = []
 	bullets = []
@@ -759,18 +793,18 @@ function nextFloor() {
 	curShake = 50;
 }
 
-function weighted_random(items, weights) {
+function weighted_random(items) {
     let i;
+    let a = JSON.parse(sessionStorage.getItem("weights"))	
 
-    for (i = 0; i < weights.length; i++)
-        weights[i] += weights[i - 1] || 0;
+    for (i = 0; i < a.length; i++)
+        a[i] += a[i - 1] || 0;
     
-    let random = Math.random() * weights[weights.length - 1];
+    let random = Math.random() * a[a.length - 1];
     
-    for (i = 0; i < weights.length; i++)
-        if (weights[i] > random)
+    for (i = 0; i < a.length; i++)
+        if (a[i] > random)
             break;
-    
     return items[i];
 }
 
@@ -1023,7 +1057,7 @@ function gameLoop() {
 
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
-		context.fillText("Menu", 0, 200);
+		context.fillText("Menu", 0, 250);
 	} else if (menuState == 0){
 		//health handler
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
@@ -1279,7 +1313,7 @@ function gameLoop() {
 
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
-		context.fillText("Paused", 0, 200);
+		context.fillText("Paused", 0, 250);
 	}
 
 	setTimeout(gameLoop, cycleDelay);
@@ -1287,8 +1321,9 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+22, 0, 100);
+	context.fillText("Ver:"+23, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
+	context.fillText("Chances:"+chances, 0, 200);
 }
 window.onload = function() {
 	gen(); 
