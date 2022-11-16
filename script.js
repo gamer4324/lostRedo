@@ -757,31 +757,31 @@ function nextFloor() {
 	}if (floor==8) {
 		chances[0]=85
 		chances[1]=15
-	}if (floor=10) {
+	}if (floor==10) {
 		chances[0]=79
 		chances[1]=20
 		chances[2]=1
-	}if (floor=12) {
+	}if (floor==12) {
 		chances[0]=55
 		chances[1]=45
-	}if (floor=14) {
+	}if (floor==14) {
 		chances[0]=10
 		chances[1]=87
 		chances[2]=3
-	}if (floor=16) {
+	}if (floor==16) {
 		chances[0]=5
 		chances[1]=90
 		chances[2]=5
-	}if (floor=18) {
+	}if (floor==18) {
 		chances[1]=85
 		chances[2]=10
-	}if (floor=19) {
+	}if (floor==19) {
 		chances[1]=70
 		chances[2]=25
-	}if (floor=22) {
+	}if (floor==22) {
 		chances[1]=60
 		chances[2]=35
-	}if (floor=25) {
+	}if (floor==25) {
 		chances[1]=5
 		chances[2]=90
 	}
@@ -1321,7 +1321,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+24, 0, 100);
+	context.fillText("Ver:"+25, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
