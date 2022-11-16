@@ -1321,7 +1321,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+23, 0, 100);
+	context.fillText("Ver:"+24, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
@@ -1329,4 +1329,5 @@ window.onload = function() {
 	gen(); 
 	gameLoop()
 	console.log("loaded"); 
+	sessionStorage.setItem("weights", JSON.stringify(chances));
 }
