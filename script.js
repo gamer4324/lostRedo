@@ -86,6 +86,45 @@ class ghost {
 	}
 }
 
+class phantom {
+	constructor () {
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.img = new Image();
+		this.img.src = "assests/enemys/phantom.png";
+		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.teir = 2
+		this.vx = 0
+		this.vy = 0
+	}
+
+	update() {
+
+		this.vx = lerp(this.vx,0,0.05)
+		this.vy = lerp(this.vy,0,0.05)
+
+		this.position.x += this.vx
+		this.position.y += this.vy
+
+
+		if (((this.position.x-mouse.x + mapOffset.x)**2+(this.position.y-mouse.y + mapOffset.y)**2)**0.5 >= (this.size.x)/2) {
+			this.vx -= Math.sin(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
+			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
+		} else {
+			curShake = 1
+			player.health -= 1.5
+		}
+		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	hit(pos,v) {
+		
+		player.curency += this.teir**2
+		enemys.splice(v,1)
+		bullets.splice(pos,1)
+	}
+}
+
 class shooter {
 	constructor () {
 		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
@@ -202,7 +241,7 @@ class controller {
 		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*5
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
-		this.img.src = "assests/enemys/blocker.png";
+		this.img.src = "assests/enemys/controller.png";
 		this.size = new vector2(roomSize.x/10,roomSize.y/10)
 		this.countLimti = randInt(60,180)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
@@ -832,17 +871,16 @@ function enterRoom(room) {
 					enemys.push(new runner())
 				}
 			} if (chance == "rare") {
-				var a = randInt(1,2)
+				var a = randInt(1,3)
 				if (a == 1) {
 					enemys.push(new blocker())
 				}if (a == 2) {
 					enemys.push(new doger())
+				}if (a == 3) {
+					enemys.push(new phantom())
 				}
 			} if (chance == "epic") {
-				var a = randInt(1,1)
-				if (a == 1) {
-					enemys.push(new controller())
-				}
+				enemys.push(new controller())
 			}
 		}
 	}
@@ -1321,7 +1359,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+26, 0, 100);
+	context.fillText("Ver:"+27, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
