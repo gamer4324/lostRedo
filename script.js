@@ -238,7 +238,7 @@ class blocker {
 
 class controller {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*5
+		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*2
 		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/controller.png";
@@ -268,7 +268,7 @@ class controller {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.health = 0
+			player.health -= 50
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
@@ -1359,7 +1359,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+27, 0, 100);
+	context.fillText("Ver:"+28, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
