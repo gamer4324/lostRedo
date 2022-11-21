@@ -96,12 +96,13 @@ class phantom {
 		this.teir = 2
 		this.vx = 0
 		this.vy = 0
+		this.drag = randInt(10,100)/1000
 	}
 
 	update() {
 
-		this.vx = lerp(this.vx,0,0.05)
-		this.vy = lerp(this.vy,0,0.05)
+		this.vx = lerp(this.vx,0,this.drag)
+		this.vy = lerp(this.vy,0,this.drag)
 
 		this.position.x += this.vx
 		this.position.y += this.vy
@@ -112,7 +113,7 @@ class phantom {
 			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
 		} else {
 			curShake = 1
-			player.health -= 1.5
+			player.health -= 5
 		}
 		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
@@ -783,6 +784,7 @@ var chances = [100,0,0]
 
 // functions
 function nextFloor() {
+	player.curency += floor**2
 	floor++
 	if (floor==3) {
 		chances[0]=98
@@ -1359,7 +1361,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+28, 0, 100);
+	context.fillText("Ver:"+29, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
