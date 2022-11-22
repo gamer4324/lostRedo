@@ -26,6 +26,30 @@ for (let img = 1; img <= imgages; img++) {
 }
 
 //classes
+class puddle {
+	constructor(pos) {
+		this.position = pos
+		this.rad = 50
+		this.frame = 0
+	}
+	update(pos) {
+		this.frame++
+
+		if (this.rad-(this.frame/50)**2 <= 0) {
+			puddles.splice(pos,1)
+			return false
+		}
+
+
+		context.fillStyle = '#8a0303';
+		context.beginPath();
+		context.arc(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
+			this.rad-(this.frame/50)**2,
+			 0, DOUBLE_PI);
+	  context.fill();
+	}
+}
+
 class runner {
 	constructor () {
 		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
@@ -50,7 +74,7 @@ class runner {
 	}
 
 	hit(pos,v) {
-		
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -687,6 +711,7 @@ var shopItems = [
 {name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
 var chances = [100,0,0]
+var puddles = [new puddle]
 
 // events
 {
@@ -1185,29 +1210,6 @@ function gameLoop() {
 				nextFloor()
 			}
 
-			if (keys[69]) {
-				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
-				for (let i = 1; i <= MaxDash; i++) {
-					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
-					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
-					var data = context.getImageData(rayX,rayY, 1, 1).data;
-					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-						context.fillStyle = 'Green';
-						context.beginPath();
-						context.arc(player.position.x+mapOffset.x + Math.sin(look)*(i-1),player.position.y+mapOffset.y + Math.cos(look)*(i-1), roomSize.x/100, 0, DOUBLE_PI);
-						context.fill()
-						break
-					} else {
-						if (i==MaxDash) {
-							context.fillStyle = 'Green';
-							context.beginPath();
-							context.arc(player.position.x+mapOffset.x + Math.sin(look)*(MaxDash),player.position.y+mapOffset.y + Math.cos(look)*(MaxDash), roomSize.x/100, 0, DOUBLE_PI);
-							context.fill()
-						}
-					}
-				}
-			}
-
 			if (Math.abs(player.vx > 0.01)) {
 				player.position.x += player.vx
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
@@ -1240,6 +1242,29 @@ function gameLoop() {
 					player.position.x -= player.strafe / 16 * player.speed
 				}
 			};
+
+			if (keys[69]) {
+				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
+				for (let i = 1; i <= MaxDash; i++) {
+					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
+					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
+					var data = context.getImageData(rayX,rayY, 1, 1).data;
+					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+						context.fillStyle = 'Green';
+						context.beginPath();
+						context.arc(player.position.x+mapOffset.x + Math.sin(look)*(i-1),player.position.y+mapOffset.y + Math.cos(look)*(i-1), roomSize.x/100, 0, DOUBLE_PI);
+						context.fill()
+						break
+					} else {
+						if (i==MaxDash) {
+							context.fillStyle = 'Green';
+							context.beginPath();
+							context.arc(player.position.x+mapOffset.x + Math.sin(look)*(MaxDash),player.position.y+mapOffset.y + Math.cos(look)*(MaxDash), roomSize.x/100, 0, DOUBLE_PI);
+							context.fill()
+						}
+					}
+				}
+			}
 		};
 		
 		// draw player
@@ -1275,6 +1300,10 @@ function gameLoop() {
 					nextRoom = map.get(plrX-1,plrY)
 				}
 			}	
+		}
+
+		for (let v in puddles) {
+			puddles[v].update(v)
 		}
 
 		for (let v in enemys) {
@@ -1361,7 +1390,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+29, 0, 100);
+	context.fillText("Ver:"+30, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
