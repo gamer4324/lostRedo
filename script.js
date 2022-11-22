@@ -29,7 +29,7 @@ for (let img = 1; img <= imgages; img++) {
 class puddle {
 	constructor(pos) {
 		this.position = pos
-		this.rad = 50
+		this.rad = roomSize.x/10/2
 		this.frame = 0
 	}
 	update(pos) {
@@ -104,6 +104,7 @@ class ghost {
 
 	hit(pos,v) {
 		
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -144,6 +145,7 @@ class phantom {
 
 	hit(pos,v) {
 		
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -198,6 +200,7 @@ class shooter {
 
 	hit(pos,v) {
 		
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -255,6 +258,7 @@ class blocker {
 
 	hit(pos,v) {
 		
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -299,6 +303,7 @@ class controller {
 	}
 
 	hit(pos,v) {
+		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		if (this.state == true) player.speed *= 2
 		player.curency += this.teir**2
 		enemys.splice(v,1)
@@ -348,6 +353,7 @@ class doger {
 
 	hit(pos,v) {
 		if (randInt(1,6)==6) {
+			puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 			player.curency += enemys[v].teir**2
 			enemys.splice(v,1)
 			bullets.splice(pos,1)
@@ -1390,7 +1396,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+30.5, 0, 100);
+	context.fillText("Ver:"+31, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
