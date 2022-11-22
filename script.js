@@ -39,10 +39,10 @@ class puddle {
 			puddles.splice(pos,1)
 			return false
 		}
-		if (frame/50>=1) {
+		if (this.frame/50>=1) {
 			context.globalAlpha = 1
 		} else {
-			context.globalAlpha = frame/50
+			context.globalAlpha = this.frame/50
 		}
 
 		context.fillStyle = '#8a0303';
@@ -1401,7 +1401,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+31.5, 0, 100);
+	context.fillText("Ver:"+32, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
