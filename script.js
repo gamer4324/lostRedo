@@ -711,7 +711,7 @@ var shopItems = [
 {name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
 var chances = [100,0,0]
-var puddles = [new puddle]
+var puddles = [new puddle({x:50,y:50})]
 
 // events
 {
@@ -1390,7 +1390,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+30, 0, 100);
+	context.fillText("Ver:"+30.5, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
