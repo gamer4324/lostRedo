@@ -29,30 +29,42 @@ for (let img = 1; img <= imgages; img++) {
 class puddle {
 	constructor(pos) {
 		this.position = pos
-		this.rad = roomSize.x/10/4
-		this.frame = 0
-		// this.color = "#"+randInt(50,99)+randInt(50,99)+randInt(50,99)
+		this.rad = roomSize.x/40
+		this.frame = 1
+		this.color = "#" + Math.floor(Math.random()*16777215).toString(16)
 		this.color = "#8a0303"
+		this.fade = false
+		this.fadeStart = 0
 	}
 	update(pos) {
 		this.frame++
+		let size = this.rad-(this.frame/50)**2
 
-		if (this.rad-(this.frame/50)**2 <= roomSize.x/10/8) {
+		if (this.fade && 1-((this.frame-this.fadeStart)/25) > 0) {
+			context.globalAlpha = 1-((this.frame-this.fadeStart)/25)
+			size = this.rad-(this.fadeStart/50)**2
+		} if (this.fade && 1-((this.frame-this.fadeStart)/25) <= 0) {
 			puddles.splice(pos,1)
 			return false
 		}
-		if (this.frame/25>=1) {
+
+		if (this.rad-(this.frame/50)**2 <= roomSize.x/10/8 && !this.fade) {
+			this.fade = true
+			this.fadeStart = this.frame
+			size = this.rad-(this.fadeStart/50)**2
+		}
+
+		if (this.frame/25>=1 && !this.fade) {
 			context.globalAlpha = 1
-		} else {
+		} else if(!this.fade) {
 			context.globalAlpha = this.frame/25
 		}
 
-		// context.fillStyle = '#8a0303';
 		context.fillStyle = this.color
 		context.beginPath();
 		context.arc(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
-			this.rad-(this.frame/50)**2,
-			 0, DOUBLE_PI);
+			Math.abs(size),
+			0, DOUBLE_PI);
 	  context.fill();
 	  context.globalAlpha = 1
 	}
@@ -83,7 +95,7 @@ class runner {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -119,7 +131,7 @@ class ghost {
 	hit(pos,v) {
 		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -165,7 +177,7 @@ class phantom {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -225,7 +237,7 @@ class shooter {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -288,7 +300,7 @@ class blocker {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -339,7 +351,7 @@ class controller {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-		for (let v = 0; v < 30; v++) {
+		for (let v = 0; v < 3; v++) {
 			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -395,7 +407,7 @@ class doger {
 	hit(pos,v) {
 		if (randInt(1,6)==6) {
 			puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-			for (let v = 0; v < 30; v++) {
+			for (let v = 0; v < 3; v++) {
 				let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
 				let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
 				let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -862,6 +874,7 @@ var puddles = [new puddle({x:50,y:50})]
 
 // functions
 function nextFloor() {
+	puddles = []
 	player.curency += floor**2
 	floor++
 	if (floor==3) {
@@ -881,7 +894,7 @@ function nextFloor() {
 		chances[1]=20
 		chances[2]=1
 	}if (floor==12) {
-		chances[0]=55
+		chances[0]=54
 		chances[1]=45
 	}if (floor==14) {
 		chances[0]=10
@@ -913,18 +926,17 @@ function nextFloor() {
 }
 
 function weighted_random(items) {
-    let i;
-    let a = JSON.parse(sessionStorage.getItem("weights"))	
-
-    for (i = 0; i < a.length; i++)
-        a[i] += a[i - 1] || 0;
-    
-    let random = Math.random() * a[a.length - 1];
-    
-    for (i = 0; i < a.length; i++)
-        if (a[i] > random)
-            break;
-    return items[i];
+  let i;
+  let a = JSON.parse(sessionStorage.getItem("weights"))	
+	for (i = 0; i < a.length; i++)
+    a[i] += a[i - 1] || 0;
+  
+  let random = Math.random() * a[a.length - 1];
+  
+  for (i = 0; i < a.length; i++)
+      if (a[i] > random)
+          break;
+  return items[i];
 }
 
 function change_fps(Nfps) {
@@ -939,6 +951,7 @@ function distance(pos1,pos2) {
 function enterRoom(room) {
 	if (room.roomData[1].length+room.roomData[2].length >= 2) {
 		for (let vds = 1; vds<=floor; vds++) {
+			// enemys.push(new runner())
 			let chance = weighted_random(["common","rare","epic"],chances)
 			console.log(chance)
 			if (chance == "common") {
@@ -977,11 +990,11 @@ function lerp(val1,val2,amt) {
 };
 
 function range(start, end) {
-    var ans = [];
-    for (let i = start; i <= end; i++) {
-        ans.push(i);
-    }
-    return ans;
+  var ans = [];
+  for (let i = start; i <= end; i++) {
+      ans.push(i);
+  }
+  return ans;
 }
 
 function randInt(min,max) {
@@ -1443,7 +1456,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+33, 0, 100);
+	context.fillText("Ver:"+34, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
