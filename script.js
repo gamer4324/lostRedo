@@ -29,29 +29,32 @@ for (let img = 1; img <= imgages; img++) {
 class puddle {
 	constructor(pos) {
 		this.position = pos
-		this.rad = roomSize.x/10/2
+		this.rad = roomSize.x/10/4
 		this.frame = 0
+		// this.color = "#"+randInt(50,99)+randInt(50,99)+randInt(50,99)
+		this.color = "#8a0303"
 	}
 	update(pos) {
 		this.frame++
 
-		if (this.rad-(this.frame/50)**2 <= 0) {
+		if (this.rad-(this.frame/50)**2 <= roomSize.x/10/8) {
 			puddles.splice(pos,1)
 			return false
 		}
-		if (this.frame/50>=1) {
+		if (this.frame/25>=1) {
 			context.globalAlpha = 1
 		} else {
-			context.globalAlpha = this.frame/50
+			context.globalAlpha = this.frame/25
 		}
 
-		context.fillStyle = '#8a0303';
+		// context.fillStyle = '#8a0303';
+		context.fillStyle = this.color
 		context.beginPath();
 		context.arc(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
 			this.rad-(this.frame/50)**2,
 			 0, DOUBLE_PI);
 	  context.fill();
-	  globalAlpha = 1
+	  context.globalAlpha = 1
 	}
 }
 
@@ -80,6 +83,12 @@ class runner {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -110,6 +119,12 @@ class ghost {
 	hit(pos,v) {
 		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -149,8 +164,13 @@ class phantom {
 	}
 
 	hit(pos,v) {
-		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -204,8 +224,13 @@ class shooter {
 	}
 
 	hit(pos,v) {
-		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -262,8 +287,13 @@ class blocker {
 	}
 
 	hit(pos,v) {
-		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		player.curency += this.teir**2
 		enemys.splice(v,1)
 		bullets.splice(pos,1)
@@ -309,6 +339,12 @@ class controller {
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+		for (let v = 0; v < 30; v++) {
+			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+			puddles.push(pud)
+		}
 		if (this.state == true) player.speed *= 2
 		player.curency += this.teir**2
 		enemys.splice(v,1)
@@ -359,6 +395,12 @@ class doger {
 	hit(pos,v) {
 		if (randInt(1,6)==6) {
 			puddles.push(new puddle({x:this.position.x,y:this.position.y}))
+			for (let v = 0; v < 30; v++) {
+				let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
+				let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+				let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
+				puddles.push(pud)
+			}
 			player.curency += enemys[v].teir**2
 			enemys.splice(v,1)
 			bullets.splice(pos,1)
@@ -1401,7 +1443,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+32, 0, 100);
+	context.fillText("Ver:"+33, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
