@@ -848,28 +848,14 @@ var puddles = [new puddle({x:50,y:50})]
   false);
 
 	window.addEventListener('keyup',
-	    function(e){
-	        keys[e.keyCode] = false;
-	        if (e.keyCode == 69 && menuState == 0) {
-				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
-				for (let i = 1; i <= MaxDash; i++) {
-					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
-					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
-					var data = context.getImageData(rayX,rayY, 1, 1).data;
-					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-						player.position.x += Math.sin(look)*(i-1)
-						player.position.y += Math.cos(look)*(i-1)
-						break
-					} else {
-						if (i==MaxDash) {
-							player.position.x += Math.sin(look)*(MaxDash)
-							player.position.y += Math.cos(look)*(MaxDash)
-						}
-					}
-				}
-			}
-	    },
-	false);
+	function(e){
+		keys[e.keyCode] = false;
+		if (e.keyCode == 69 && menuState == 0) {
+			look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
+			player.vx += Math.sin(look)*(MaxDash)/8
+			player.vy += Math.cos(look)*(MaxDash)/8
+		}
+	},false);
 }
 
 // functions
@@ -1276,7 +1262,7 @@ function gameLoop() {
 				nextFloor()
 			}
 
-			if (Math.abs(player.vx > 0.01)) {
+			if (Math.abs(player.vx) > 0.01) {
 				player.position.x += player.vx
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
 				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
@@ -1284,7 +1270,7 @@ function gameLoop() {
 				}
 			}
 
-			if (Math.abs(player.vx > 0.01)) {
+			if (Math.abs(player.vy) > 0.01) {
 				player.position.y += player.vy
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
 				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
@@ -1456,7 +1442,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+34, 0, 100);
+	context.fillText("Ver:"+35, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
