@@ -17,7 +17,7 @@ startInfo.src = "assests/images/start.png";
 var startInfo2 = new Image()
 startInfo2.src = "assests/images/start2.png";
 
-var imgages = 1
+var imgages = 3
 var decorationImages = []
 for (let img = 1; img <= imgages; img++) {
 	var curImage = new Image();
@@ -994,8 +994,9 @@ function randInt(min,max) {
 function makeRoom(name, position, exitDoors = [1,2], entrenceDoors = [3,4]) {
 	let Rect = new rect(new vector2(roomSize.x*position.x,roomSize.y*position.y),new vector2(roomSize.x,roomSize.y))
 	let decorations = []
-	for (let V = 0; V <= randInt(0,3); V++) {
-		let size = new vector2(randInt(20,40)/100,randInt(20,40)/100)
+	for (let V = 0; V <= randInt(0,300); V++) {
+		let sizeCon = randInt(20,40)/200
+		let size = new vector2(sizeCon,sizeCon)
 		let pos = new vector2(randInt(10,90)/100,randInt(10,90)/100)
 		decorations.push(new deco(-1,pos,size))
 	}
@@ -1175,7 +1176,8 @@ function gameLoop() {
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
 		context.fillText("Menu", 0, 250);
-	} else if (menuState == 0){
+	} else 
+	if (menuState == 0){
 		//health handler
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
 			player.health+=player.maxHealth/1000
@@ -1267,6 +1269,7 @@ function gameLoop() {
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
 				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
 					player.position.x -= player.vx
+					player.vx = 0
 				}
 			}
 
@@ -1275,6 +1278,7 @@ function gameLoop() {
 				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
 				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
 					player.position.y -= player.vy
+					player.vy = 0
 				}
 			}
 
@@ -1319,6 +1323,10 @@ function gameLoop() {
 			}
 		};
 		
+		for (let v in puddles) {
+			puddles[v].update()
+		}
+
 		// draw player
 		{
 			context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
@@ -1354,10 +1362,6 @@ function gameLoop() {
 			}	
 		}
 
-		for (let v in puddles) {
-			puddles[v].update(v)
-		}
-
 		for (let v in enemys) {
 			enemys[v].update()
 		}
@@ -1372,14 +1376,103 @@ function gameLoop() {
 		context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, zoom, 0, 2 * Math.PI);
 		context.rect(canvas.width, 0,-canvas.width,canvas.height);
 		context.fill();
-	} else if (menuState == 2){
-		context.fillStyle = "#3D3D90";
-		context.fillRect(0,0,canvas.width,canvas.height)
-		
-		context.fillStyle = "#1D3F6E";
-		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
+	} else 
+	if (menuState == 2){
+		// draw old frame
+		mapOffset = new vector2(canvas.width / 2 - roomSize.x/2 - camOffset.x ,canvas.height / 2 - roomSize.y/2 - camOffset.y)
 
-		context.fillStyle = "#1D3F6E";
+		context.fillStyle = "#333333";
+		context.fillRect(0,0,canvas.width,canvas.height)
+
+		context.fillStyle = '#000000';
+		context.fillRect(mapOffset.x, mapOffset.y, roomSize.x*mapSize.x, roomSize.x*mapSize.y);
+
+		// draw map
+		{
+			for (let y in map.map){
+				for (let x in map.map[y]) {
+					var spot = map.get(x,y)
+					if (spot != 0) {
+						spot.draw()
+					} else {
+						var rec2 = new rect(new vector2(x * roomSize.x + roomSize.x * roomBoarder - camOffset.x,y * roomSize.y + roomSize.x * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
+						rec2.draw("#050505")
+					}
+				}
+			}
+			if (floor == 1) {
+				context.drawImage(startInfo,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)) 
+				var a = map.get(0,0).roomData[1][0]
+				if (a == 2 && map.get(1,0).entered == true) {
+					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x + roomSize.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y             ,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
+				}if (a == 3 && map.get(0,1).entered == true) {
+					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x             ,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y + roomSize.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
+				}
+			}
+		}
+
+	 	for (let v in puddles) {
+			let size = puddles[v].rad-(puddles[v].frame/50)**2
+
+			if (puddles[v].fade && 1-((puddles[v].frame-puddles[v].fadeStart)/25) > 0) {
+				context.globalAlpha = 1-((puddles[v].frame-puddles[v].fadeStart)/25)
+				size = puddles[v].rad-(puddles[v].fadeStart/50)**2
+			}
+
+			if (puddles[v].rad-(puddles[v].frame/50)**2 <= roomSize.x/10/8 && !puddles[v].fade) {
+				puddles[v].fade = true
+				puddles[v].fadeStart = puddles[v].frame
+				size = puddles[v].rad-(puddles[v].fadeStart/50)**2
+			}
+
+			if (puddles[v].frame/25>=1 && !puddles[v].fade) {
+				context.globalAlpha = 1
+			} else if(!puddles[v].fade) {
+				context.globalAlpha = puddles[v].frame/25
+			}
+
+			context.fillStyle = puddles[v].color
+			context.beginPath();
+			context.arc(puddles[v].position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, puddles[v].position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
+				Math.abs(size),
+				0, DOUBLE_PI);
+		  context.fill();
+		  context.globalAlpha = 1
+		}
+
+		// draw player
+		{
+			context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+			context.beginPath();
+			context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, roomSize.x/20, 0, DOUBLE_PI);
+			context.fill();
+	 	}
+
+		for (let v in enemys) {
+			context.drawImage(enemys[v].img,enemys[v].position.x + mapOffset.x - enemys[v].size.x / 2,enemys[v].position.y + mapOffset.y - enemys[v].size.y/2,enemys[v].size.x,enemys[v].size.y)
+		}
+
+		for (let v in bullets) {
+			context.fillStyle = 'Green';
+			context.beginPath();
+	    context.arc(bullets[v].position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, bullets[v].position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , roomSize.x/80, 0, DOUBLE_PI);
+	    context.fill();
+		}
+		
+		// draw overlay
+		context.fillStyle = "#3f3f3f";
+		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
+		context.fillStyle = "#5f5f5f"
+		context.fillRect(canvas.width/2-100+5,canvas.height/2-30+5,200-10,60-10)
+		context.textAlign = "center"
+		context.font = '50px Monospace';
+   	context.strokeStyle = '#000000';
+		context.lineWidth = 10;
+		context.strokeText("Resume", canvas.width/2, canvas.height/2+15)
+		context.fillStyle = '#ffffff';
+		context.fillText("Resume", canvas.width/2, canvas.height/2+15)
+
+		context.fillStyle = "#3f3f3f";
 		context.fillRect(canvas.width/2-500,canvas.height/2+195,1000,-100)
 
 		for (let v in shopItems) {
@@ -1387,7 +1480,7 @@ function gameLoop() {
 			let len = shopItems.length
 			let p1 = new vector2(canvas.width/2-500+1000/len*v,canvas.height/2+195)
 
-			context.fillStyle = "#1a457a"
+			context.fillStyle = "#5f5f5f"
 			context.fillRect(p1.x+5,p1.y-5,1000/len-10,-90)
 
 			context.textAlign = "center"
@@ -1414,15 +1507,17 @@ function gameLoop() {
 
 		if (mouse.x >= canvas.width/2-500 && mouse.x <= canvas.width/2+500) {
 			scrollMenu1 = mouse.x
-		} else if(mouse.x >= canvas.width/2-500) {
+		} else
+		if(mouse.x >= canvas.width/2-500) {
 			scrollMenu1 = canvas.width/2+500
-		} else if(mouse.x <= canvas.width/2+500) {
+		} else 
+		if(mouse.x <= canvas.width/2+500) {
 			scrollMenu1 = canvas.width/2-500
 		}
 
 		scrollMenu2 = lerp(scrollMenu2,scrollMenu1,0.2)
 		
-		context.fillStyle = "#000000";
+		context.fillStyle = "#3f3f3f";
 		context.beginPath();
 		context.arc(scrollMenu2+roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
 		context.arc(scrollMenu2-roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
@@ -1431,6 +1526,16 @@ function gameLoop() {
 		context.lineTo(scrollMenu2+roomSize.x/25,canvas.height/2+195+roomSize.x/40)
 		context.fill();
 		context.fillRect(scrollMenu2-roomSize.x/60,canvas.height/2+195-roomSize.x/20+roomSize.x/20,roomSize.x/36,roomSize.x/20)
+
+		context.fillStyle = "#5f5f5f";
+		context.beginPath();
+		context.arc(scrollMenu2+roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/80, 0, DOUBLE_PI);
+		context.arc(scrollMenu2-roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/80, 0, DOUBLE_PI);
+		context.moveTo(scrollMenu2-roomSize.x/35,canvas.height/2+195+roomSize.x/40)
+		context.lineTo(scrollMenu2,canvas.height/2+160+roomSize.x/15)
+		context.lineTo(scrollMenu2+roomSize.x/35,canvas.height/2+195+roomSize.x/40)
+		context.fill();
+		context.fillRect(scrollMenu2-roomSize.x/60,canvas.height/2+195-roomSize.x/20+roomSize.x/20,roomSize.x/36,roomSize.x/25)
 
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
@@ -1442,7 +1547,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+35, 0, 100);
+	context.fillText("Ver:"+36, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
