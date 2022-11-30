@@ -487,14 +487,14 @@ class room {
 		
 		// entered
 		if (this.entered) {
-			rec2.draw("#dadada")
+			rec2.draw("#605853")
 			for (let exit in this.roomData[1]) {
 				if (this.roomData[1][exit] == 1) {
 				  var pos = new vector2(this.base.position.x + roomSize.x / 2 - roomSize.x / 20  - camOffset.x,this.base.position.y - camOffset.y)
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
 				  if (enemys.length == 0) {
-					  rec.draw("#dadada")
+					  rec.draw("#605853")
 				  }
 				}
 				if (this.roomData[1][exit] == 2) {
@@ -502,7 +502,7 @@ class room {
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
 				  if (enemys.length == 0) {
-					  rec.draw("#dadada")
+					  rec.draw("#605853")
 				  }
 				}
 				if (this.roomData[1][exit] == 3) {
@@ -510,7 +510,7 @@ class room {
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
 				  if (enemys.length == 0) {
-					  rec.draw("#dadada")
+					  rec.draw("#605853")
 				  }
 				}
 				if (this.roomData[1][exit] == 4) {
@@ -518,7 +518,7 @@ class room {
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
 				  if (enemys.length == 0) {
-					  rec.draw("#dadada")
+					  rec.draw("#605853")
 				  }
 				}
 			}
@@ -527,25 +527,25 @@ class room {
 				  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y - camOffset.y)
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
-				  rec.draw("#dadada")
+				  rec.draw("#605853")
 				}
 				if (this.roomData[2][exit] == 2) {
 				  var pos = new vector2(this.base.position.x+roomSize.x-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
-				  rec.draw("#dadada")
+				  rec.draw("#605853")
 				}
 				if (this.roomData[2][exit] == 3) {
 				  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.y-roomSize.y/20 - camOffset.y)
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
-				  rec.draw("#dadada")
+				  rec.draw("#605853")
 				}
 				if (this.roomData[2][exit] == 4) {
 				  var pos = new vector2(this.base.position.x - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
 				  var size = new vector2(roomSize.x/10,roomSize.y/10)
 				  var rec = new rect(pos,size)
-				  rec.draw("#dadada")
+				  rec.draw("#605853")
 				}
 			}
 		} 
@@ -777,6 +777,7 @@ var shopItems = [
 ] 
 var chances = [100,0,0]
 var puddles = [new puddle({x:50,y:50})]
+var moveablePixles = []
 
 // events
 {
@@ -859,6 +860,21 @@ var puddles = [new puddle({x:50,y:50})]
 }
 
 // functions
+function reDrawNavMesh() {
+	moveablePixles = []
+	for (let y in map.map){
+		for (let x in map.map[y]) {
+			var spot = map.get(x,y)
+			if (spot != 0) {
+				let rec1 = spot.base
+				let rec2 = new rect(new vector2(x * roomSize.x + roomSize.x * roomBoarder - camOffset.x,y * roomSize.y + roomSize.x * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
+				// let rec2 = new rect(new vector2(rec1.position.x + rec1.size.x * roomBoarder - camOffset.x,rec1.position.y + rec1.size.y * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
+				moveablePixles.push(rec2)
+			}
+		}
+	}
+}
+
 function nextFloor() {
 	puddles = []
 	player.curency += floor**2
@@ -994,8 +1010,8 @@ function randInt(min,max) {
 function makeRoom(name, position, exitDoors = [1,2], entrenceDoors = [3,4]) {
 	let Rect = new rect(new vector2(roomSize.x*position.x,roomSize.y*position.y),new vector2(roomSize.x,roomSize.y))
 	let decorations = []
-	for (let V = 0; V <= randInt(0,300); V++) {
-		let sizeCon = randInt(20,40)/200
+	for (let V = 0; V <= randInt(0,3); V++) {
+		let sizeCon = randInt(25,35)/200
 		let size = new vector2(sizeCon,sizeCon)
 		let pos = new vector2(randInt(10,90)/100,randInt(10,90)/100)
 		decorations.push(new deco(-1,pos,size))
@@ -1322,6 +1338,11 @@ function gameLoop() {
 				}
 			}
 		};
+
+		reDrawNavMesh()
+		for (let v in moveablePixles) {
+		moveablePixles[v].draw(color = "red")
+	}
 		
 		for (let v in puddles) {
 			puddles[v].update()
@@ -1542,12 +1563,25 @@ function gameLoop() {
 		context.fillText("Paused", 0, 250);
 	}
 
+	// context.fillStyle = "#00ff00";
+	
+	// for (let v in range(0,1)) {
+	// 	if(mapOffset.x+v*roomSize.x < mouse.x && mouse.x < roomSize.x*roomBoarder+mapOffset.x+v*roomSize.x) context.fillStyle = "#ff0000";
+	// 	if(mouse.x<mapOffset.x+(v+1)*roomSize.x && mapOffset.x+(v+1)*roomSize.x-roomSize.x*roomBoarder < mouse.x) context.fillStyle = "#ff0000";
+	// }
+	
+	// context.beginPath();
+	// context.arc(mouse.x, mouse.y, roomSize.x/200, 0, DOUBLE_PI);
+	// context.fill();
+
+	
+	
 	setTimeout(gameLoop, cycleDelay);
 	
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+36, 0, 100);
+	context.fillText("Ver:"+37, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
