@@ -591,23 +591,23 @@ class room {
 			}
 		} 
 
-		// //decorations
-		// if (this.roomData[1].length == 0 && this.entered) {
-		// 	var scale = new vector2(roomSize.x/2.5,roomSize.x/2.5)
-		//   	context.drawImage(base_image, 
-		//   		canvas.width / 2 - roomSize.x/2 + this.base.position.x - camOffset.x + roomSize.x/2 - scale.x/2,
-		//   		canvas.height / 2 - roomSize.y/2 + this.base.position.y - camOffset.y + roomSize.y/2 - scale.y/2,scale.x,scale.y);
-		// }
+		//decorations
+		if (this.roomData[1] == -1 && this.entered) {
+			var scale = new vector2(roomSize.x/2.5,roomSize.x/2.5)
+		  	context.drawImage(base_image, 
+		  		canvas.width / 2 - roomSize.x/2 + this.base.position.x - camOffset.x + roomSize.x/2 - scale.x/2,
+		  		canvas.height / 2 - roomSize.y/2 + this.base.position.y - camOffset.y + roomSize.y/2 - scale.y/2,scale.x,scale.y);
+		}
 
-		// if (this.roomData[1].length != 0 && this.roomData[2].length != 0 && this.entered) {
-		// 	for (let v in this.roomData[0]) {
+		if (this.roomData[1] != -1 && this.roomData[2] != -1 && this.entered) {
+			for (let v in this.roomData[0]) {
 
-		// 	  context.drawImage(this.roomData[0][v].img, 
-		// 	  		this.base.position.x + this.base.size.x * 0 + canvas.width / 2 - roomSize.x/2 - camOffset.x - (this.roomData[0][v].size.x * (roomSize.x * 0.8)) / 2 + this.roomData[0][v].position.x * (roomSize.x * 0.9),
-		// 	  		this.base.position.y + this.base.size.y * 0 + canvas.height / 2 - roomSize.y/2 - camOffset.y - (this.roomData[0][v].size.y * (roomSize.y* 0.8)) / 2 + this.roomData[0][v].position.y * (roomSize.y * 0.9),
-		// 	  		this.roomData[0][v].size.x*(roomSize.x*0.8),this.roomData[0][v].size.y*(roomSize.y*0.8));
-		// 	}
-		// }
+			  context.drawImage(this.roomData[0][v].img, 
+			  		this.base.position.x + this.base.size.x * 0 + canvas.width / 2 - roomSize.x/2 - camOffset.x - (this.roomData[0][v].size.x * (roomSize.x * 0.8)) / 2 + this.roomData[0][v].position.x * (roomSize.x * 0.9),
+			  		this.base.position.y + this.base.size.y * 0 + canvas.height / 2 - roomSize.y/2 - camOffset.y - (this.roomData[0][v].size.y * (roomSize.y* 0.8)) / 2 + this.roomData[0][v].position.y * (roomSize.y * 0.9),
+			  		this.roomData[0][v].size.x*(roomSize.x*0.8),this.roomData[0][v].size.y*(roomSize.y*0.8));
+			}
+		}
 	}
 }
 
