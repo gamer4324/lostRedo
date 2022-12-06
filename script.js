@@ -658,7 +658,7 @@ class Grid {
 	}
 
 	get(x,y) {
-		if (Math.abs(x)!= x || Math.abs(y)!=y) {console.log("fail at:"+x+","+y) return null
+		if (Math.abs(x)!= x || Math.abs(y)!=y) {console.log("fail at:"+x+","+y); return null}
 		return this.map[y][x]
 	}
 	getV2(position) {
@@ -1556,7 +1556,7 @@ function gameLoop() {
 	context.fillStyle = '#ffffff';
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+38, 0, 100);
+	context.fillText("Ver:"+39, 0, 100);
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
