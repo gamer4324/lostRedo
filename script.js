@@ -659,7 +659,12 @@ class Grid {
 
 	get(x,y) {
 		if (Math.abs(x)!= x || Math.abs(y)!=y) {console.log("fail at:"+x+","+y); return null}
-		return this.map[y][x]
+		try {
+			return this.map[y][x]
+		} catch (error) {
+		  console.error("fail at:"+x+","+y)
+		  return this.defult
+		}
 	}
 	getV2(position) {
 		return this.map[position.y][position.x]
@@ -1012,121 +1017,127 @@ function makeMap() {
 		}
 	}
 
-	lastRoom = null
-	var lastDoor = 0
+	//old
+	{
+	// lastRoom = null
+	// var lastDoor = 0
 
-	var t = 100
-	var g = 0
-	while (g<=t) {
-		if (lastRoom == null) {
-			// var position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
-			let position = new vector2(0,0);
-			// if (endRoom != 0) {
-			// 	position = new vector2(Math.floor(endRoom.base.position.x/roomSize.x) ,Math.floor(endRoom.base.position.y/roomSize.y))
-			// }
-			let exitDoor = -1
-			let entrenceDoor = -1
+	// var t = 100
+	// var g = 0
+	// while (g<=t) {
+	// 	if (lastRoom == null) {
+	// 		// var position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
+	// 		let position = new vector2(0,0);
+	// 		// if (endRoom != 0) {
+	// 		// 	position = new vector2(Math.floor(endRoom.base.position.x/roomSize.x) ,Math.floor(endRoom.base.position.y/roomSize.y))
+	// 		// }
+	// 		let exitDoor = -1
+	// 		let entrenceDoor = -1
 
-			var check = 0;
-			var posible = range(1,4)
-			for (let v = 1; v<= 4; v++) {
-				let c = randInt(0,posible.length-1)
-				let d = posible[c]
-				posible.splice(c,1);
+	// 		var check = 0;
+	// 		var posible = range(1,4)
+	// 		for (let v = 1; v<= 4; v++) {
+	// 			let c = randInt(0,posible.length-1)
+	// 			let d = posible[c]
+	// 			posible.splice(c,1);
 
-				if (d == 1 && position.y != 0 && map.get(position.x,position.y-1) == 0) {
-					exitDoor = d
-					check++
-					break;
-				} if (d == 3 && position.y != mapSize.y-1 && map.get(position.x,position.y+1) == 0) {
-					exitDoor = d
-					check++
-					break;
-				}if (d == 4 && position.x != 0 && map.get(position.x-1,position.y) == 0) {
-					exitDoor = d
-					check++
-					break;
-				} if (d == 2 && position.x != mapSize.x-1 && map.get(position.x+1,position.y) == 0) {
-					exitDoor = d
-					check++
-					break;
-				}
-			}
+	// 			if (d == 1 && position.y != 0 && map.get(position.x,position.y-1) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			} if (d == 3 && position.y != mapSize.y-1 && map.get(position.x,position.y+1) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			}if (d == 4 && position.x != 0 && map.get(position.x-1,position.y) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			} if (d == 2 && position.x != mapSize.x-1 && map.get(position.x+1,position.y) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			}
+	// 		}
 
-			// console.log(exitDoors)
+	// 		// console.log(exitDoors)
 			
-			lastDoor = exitDoor
-			let r = makeRoom("1",position,exitDoor,entrenceDoor)
-			r.entered = true
-			map.set(position.x,position.y,r)
-			lastRoom = r;
-			player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)
-		} else {
-			let exitDoor = -1
-			let entrenceDoor = -1
-			let a = 0
-			if (lastDoor <= 2) {
-				a = lastDoor + 2
-			} else {
-				a = lastDoor - 2
-			}
+	// 		lastDoor = exitDoor
+	// 		let r = makeRoom("1",position,exitDoor,entrenceDoor)
+	// 		r.entered = true
+	// 		map.set(position.x,position.y,r)
+	// 		lastRoom = r;
+	// 		player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)
+	// 	} else {
+	// 		let exitDoor = -1
+	// 		let entrenceDoor = -1
+	// 		let a = 0
+	// 		if (lastDoor <= 2) {
+	// 			a = lastDoor + 2
+	// 		} else {
+	// 			a = lastDoor - 2
+	// 		}
 
-			entrenceDoor = a
-			let x = lastRoom.base.position.x/roomSize.x;
-			let y = lastRoom.base.position.y/roomSize.y;
+	// 		entrenceDoor = a
+	// 		let x = lastRoom.base.position.x/roomSize.x;
+	// 		let y = lastRoom.base.position.y/roomSize.y;
 
-			if (a == 1) {
-				y++
-			}if (a == 2) {
-				x--
-			}if (a == 3) {
-				y--
-			}if (a == 4) {
-				x++
-			}
+	// 		if (a == 1) {
+	// 			y++
+	// 		}if (a == 2) {
+	// 			x--
+	// 		}if (a == 3) {
+	// 			y--
+	// 		}if (a == 4) {
+	// 			x++
+	// 		}
 
-			let check = 0
-			let posible = range(1,4)
-			for (let v = 1; v<= 4; v++) {
-				let c = randInt(0,posible.length-1)
-				let d = posible[c]
-				posible.splice(c,1);
+	// 		let check = 0
+	// 		let posible = range(1,4)
+	// 		for (let v = 1; v<= 4; v++) {
+	// 			let c = randInt(0,posible.length-1)
+	// 			let d = posible[c]
+	// 			posible.splice(c,1);
 
-				if (d == 1 && y != 0 && map.get(x,y-1) == 0) {
-					exitDoor = d
-					check++
-					break;
-				} if (d == 3 && y != mapSize.y-1 && map.get(x,y+1) == 0) {
-					exitDoor = d
-					check++
-					break;
-				}if (d == 4 && x != 0 && map.get(x-1,y) == 0) {
-					exitDoor = d
-					check++
-					break;
-				} if (d == 2 && x != mapSize.x-1 && map.get(x+1,y) == 0) {
-					exitDoor = d
-					check++
-					break;
-				}
-			}
-			if (stop != 0) {
-				stop = 0
-				break
-			}
-			if (check == 0) {
-				stop++
-			}
+	// 			if (d == 1 && y != 0 && map.get(x,y-1) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			} if (d == 3 && y != mapSize.y-1 && map.get(x,y+1) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			}if (d == 4 && x != 0 && map.get(x-1,y) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			} if (d == 2 && x != mapSize.x-1 && map.get(x+1,y) == 0) {
+	// 				exitDoor = d
+	// 				check++
+	// 				break;
+	// 			}
+	// 		}
+	// 		if (stop != 0) {
+	// 			stop = 0
+	// 			break
+	// 		}
+	// 		if (check == 0) {
+	// 			stop++
+	// 		}
 
-			var position = new vector2(x,y);
+	// 		var position = new vector2(x,y);
 
-			var r = makeRoom("2",position,exitDoor,entrenceDoor)
-			map.set(position.x,position.y,r)
-			lastRoom = r;
-			lastDoor = exitDoor
-		}
-		g++
+	// 		var r = makeRoom("2",position,exitDoor,entrenceDoor)
+	// 		map.set(position.x,position.y,r)
+	// 		lastRoom = r;
+	// 		lastDoor = exitDoor
+	// 	}
+	// 	g++
+	// }
 	}
+
+	//new
+	{}
 };
 
 function gen() {
@@ -1259,7 +1270,7 @@ function gameLoop() {
 			if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); curShake += 1;}
 			if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); curShake += 1;}
 
-			if (keys[32]) if (map.get(Math.floor(player.position.x / roomSize.x),Math.floor(player.position.y / roomSize.y)).roomData[1].length == 0) {
+			if (keys[32]) if (map.get(Math.floor(player.position.x / roomSize.x),Math.floor(player.position.y / roomSize.y)).roomData[1] == -1) {
 				nextFloor()
 			}
 
@@ -1334,7 +1345,7 @@ function gameLoop() {
 					map.get(plrX,plrY).entered = true
 					enterRoom(map.get(plrX,plrY))
 				}
-				var a = map.get(plrX,plrY).roomData[1][0]
+				var a = map.get(plrX,plrY).roomData[1]
 				if (a == 1 && map.get(plrX,plrY-1).entered == false) {
 					map.get(plrX,plrY-1).next = true
 					nextRoom = map.get(plrX,plrY-1)
