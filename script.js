@@ -747,13 +747,13 @@ var map = new Grid(mapSize,0)
 var roomSize = new vector2(WIDTH,HEIGHT);
 var player = new Player()
 var floor = 1
-var roomsAmt = floor*3
-var holes = range(mapSize.x * mapSize.y - roomsAmt - 3 ,mapSize.x * mapSize.y - roomsAmt );
-var atempts = 0
+// var roomsAmt = floor*3
+// var holes = range(mapSize.x * mapSize.y - roomsAmt - 3 ,mapSize.x * mapSize.y - roomsAmt );
+// var atempts = 0
 var nextRoom = null
-var lastRoom = null
-var stop = 0
-var endRoom = 0
+// var lastRoom = null
+// var stop = 0
+// var endRoom = 0
 var def = true
 var camOffset = new vector2()
 var zoom = 0
@@ -1137,28 +1137,60 @@ function makeMap() {
 	}
 
 	//new
-	{}
-};
+	{
+		let LastRoom = null
+		let LastDoor = -1
 
-function gen() {
-	roomsAmt = floor*3
-	holes = range(mapSize.x * mapSize.y - roomsAmt - 10 ,mapSize.x * mapSize.y - roomsAmt );
-	makeMap();
-	while (true) {
-		atempts++
-		if (!holes.includes(map.count(0))) {
-			makeMap();
-		} else {
-			console.log("Holes:".concat(map.count(0)))
-			console.log("atempts:".concat(atempts))
-			break;
+		while (true) {
+			if (LastRoom) {
+				let position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
+				let exit = -1
+				let enter = -1
+
+				let posibleExits = range(1,4)
+				for (let i = 1; i <= 4; i++) {
+					let c = randInt(0,posibleExits.length-1)
+					let d = posibleExits[c]
+					posibleExits.splice(c,1);
+
+					if (d == 1) if (position.y >= 0) if (map.get(position.x,position.y-1) == 0) {exit = d; break}
+					if (d == 2) if (position.x <= mapSize.x-1) if (map.get(position.x+1,position.y) == 0) {exit = d; break}
+					if (d == 3) if (position.y <= mapSize.y-1) if (map.get(position.x,position.y+1) == 0) {exit = d; break}
+					if (d == 1) if (position.x >= 0) if (map.get(position.x-1,position.y) == 0) {exit = d; break}
+				}
+
+				LastDoor = exit
+				let r = makeRoom("1",position,exit,enter)
+				r.entered = true
+				map.set(position.x,position.y,r)
+				LastRoom = r;
+				player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)				
+			} else {
+
+			}
 		}
 	}
-	endRoom = lastRoom;
-	// document.title = "done"
-	def = false
-	atempts = 0;
-}
+};
+
+// function gen() {
+// 	roomsAmt = floor*3
+// 	holes = range(mapSize.x * mapSize.y - roomsAmt - 10 ,mapSize.x * mapSize.y - roomsAmt );
+// 	makeMap();
+// 	while (true) {
+// 		atempts++
+// 		if (!holes.includes(map.count(0))) {
+// 			makeMap();
+// 		} else {
+// 			console.log("Holes:".concat(map.count(0)))
+// 			console.log("atempts:".concat(atempts))
+// 			break;
+// 		}
+// 	}
+// 	endRoom = lastRoom;
+// 	// document.title = "done"
+// 	def = false
+// 	atempts = 0;
+// }
 
 function gameLoop() {
 	// get and display fps
@@ -1571,9 +1603,9 @@ function gameLoop() {
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
-window.onload = function() {
-	gen(); 
-	gameLoop()
-	console.log("loaded"); 
-	sessionStorage.setItem("weights", JSON.stringify(chances));
-}
+// window.onload = function() {
+// 	gen(); 
+// 	gameLoop()
+// 	console.log("loaded"); 
+// 	sessionStorage.setItem("weights", JSON.stringify(chances));
+// }
