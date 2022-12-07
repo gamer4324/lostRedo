@@ -1,5 +1,5 @@
 // constances
-console.log("Ver:"+40)
+console.log("Ver:"+41)
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
@@ -663,8 +663,8 @@ class Grid {
 		try {
 			return this.map[y][x]
 		} catch (error) {
-		  console.error("fail at:"+x+","+y)
-		  return this.defult
+		  console.error(error)
+		  return -1
 		}
 	}
 	getV2(position) {
@@ -1017,7 +1017,6 @@ function makeMap() {
 			}
 		}
 	}
-
 	//old
 	{
 	// lastRoom = null
@@ -1138,39 +1137,41 @@ function makeMap() {
 	}
 
 	//new
-	{
-		let LastRoom = null
-		let LastDoor = -1
+	console.log("running")
+	let LastRoom = null
+	let LastDoor = -1
 
-		while (true) {
-			if (LastRoom) {
-				let position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
-				let exit = -1
-				let enter = -1
+	while (true) {
+		if (LastRoom) {
+			let position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
+			let exit = -1
+			let enter = -1
+			console.log("making room at:"+position)
 
-				let posibleExits = range(1,4)
-				for (let i = 1; i <= 4; i++) {
-					let c = randInt(0,posibleExits.length-1)
-					let d = posibleExits[c]
-					posibleExits.splice(c,1);
+			let posibleExits = range(1,4)
+			for (let i = 1; i <= 4; i++) {
+				let c = randInt(0,posibleExits.length-1)
+				let d = posibleExits[c]
+				posibleExits.splice(c,1);
 
-					if (d == 1) if (position.y >= 0) if (map.get(position.x,position.y-1) == 0) {exit = d; break}
-					if (d == 2) if (position.x <= mapSize.x-1) if (map.get(position.x+1,position.y) == 0) {exit = d; break}
-					if (d == 3) if (position.y <= mapSize.y-1) if (map.get(position.x,position.y+1) == 0) {exit = d; break}
-					if (d == 1) if (position.x >= 0) if (map.get(position.x-1,position.y) == 0) {exit = d; break}
-				}
-
-				LastDoor = exit
-				let r = makeRoom("1",position,exit,enter)
-				r.entered = true
-				map.set(position.x,position.y,r)
-				LastRoom = r;
-				player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)				
-			} else {
-
+				if (d == 1) if (position.y >= 0) if (map.get(position.x,position.y-1) == 0) {exit = d; break}
+				if (d == 2) if (position.x <= mapSize.x-1) if (map.get(position.x+1,position.y) == 0) {exit = d; break}
+				if (d == 3) if (position.y <= mapSize.y-1) if (map.get(position.x,position.y+1) == 0) {exit = d; break}
+				if (d == 1) if (position.x >= 0) if (map.get(position.x-1,position.y) == 0) {exit = d; break}
 			}
+
+			LastDoor = exit
+			let r = makeRoom("1",position,exit,enter)
+			console.log(r)
+			r.entered = true
+			map.set(position.x,position.y,r)
+			LastRoom = r;
+			player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)				
+		} else {
+			break
 		}
 	}
+	console.log("ran")
 };
 
 // function gen() {
