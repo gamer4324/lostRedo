@@ -1,5 +1,5 @@
 // constances
-console.log("Ver:"+42)
+console.log("Ver:"+43)
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
@@ -818,7 +818,7 @@ function render() {
   let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
   offset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2,speed),y:lerp(offset.y,curRoom.y*size-canvas.height/2,speed)}
   for (var i = 0; i < map.length; i++) {
-    context.fillStyle = "#000000"
+    context.fillStyle = "#605853"
     context.fillRect(map[i].position.x*size+size*0.05 - offset.x ,map[i].position.y*size+size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
 
     if (map[i].entr != -1) {
