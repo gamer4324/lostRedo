@@ -466,7 +466,7 @@ class Player {
 		this.angle = Math.PI;
 		this.strafe = 0;
 		this.move = 0;
-		this.speed = roomSize.x/8;
+		this.speed = size/8;
 		this.vx = 0
 		this.vy = 0
 		this.maxHealth = 100
@@ -848,7 +848,7 @@ function render() {
 }
 
 function update() {
-	
+
 }
 
 function gameLoop() {
