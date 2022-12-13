@@ -532,6 +532,14 @@ class deco {
 	}
 }
 
+class room {
+  constructor(pos,entr,exit) {
+    this.position = pos
+    this.exit = exit
+    this.entr = entr
+  }
+}
+
 // varibles
 var FPS = 60;
 var cycleDelay = Math.floor(1000 / FPS);
@@ -561,7 +569,7 @@ var shopItems = [
 {name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
 var chances = [100,0,0]
-var puddles = [new puddle({x:50,y:50})]
+var puddles = []
 var moveablePixles = []
 //new vars
 
@@ -816,7 +824,7 @@ function render() {
 	context.fillRect(0,0,canvas.width,canvas.height)
   let positions = [{x:size/2-size*0.1,y:0},{x:size-size*0.05,y:size/2-size*0.1},{x:size/2-size*0.1,y:size-size*0.05},{x:0,y:size/2-size*0.1}]
   let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
-  offset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2,speed),y:lerp(offset.y,curRoom.y*size-canvas.height/2,speed)}
+  offset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2,camSpeed)}
   for (var i = 0; i < map.length; i++) {
     context.fillStyle = "#605853"
     context.fillRect(map[i].position.x*size+size*0.05 - offset.x ,map[i].position.y*size+size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
