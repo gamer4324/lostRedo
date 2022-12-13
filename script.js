@@ -1,5 +1,5 @@
 // constances
-console.log("Ver:"+41)
+console.log("Ver:"+42)
 const canvas = document.getElementById('screen');
 const context = canvas.getContext('2d',{
   willReadFrequently: true,
