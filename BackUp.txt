@@ -458,6 +458,160 @@ class vector2 {
 	}
 }
 
+class rect {
+	constructor(pos,size, rotation = 0) {
+		this.position = pos;
+		this.size = size;
+		this.rotation = rotation;
+
+	}
+	draw(color = "Black") {
+		context.fillStyle = color;
+		context.fillRect(
+			canvas.width / 2 - roomSize.x/2 + this.position.x,
+			canvas.height / 2 - roomSize.y/2 + this.position.y,
+			this.size.x, this.size.y);
+	}
+}
+
+class room {
+	constructor(name = "",base = new rect(new vector2(),new vector2(roomSize.x,roomSize.y)),roomData) {
+		this.name = name;
+		this.base = base;
+		this.roomData = roomData;
+		this.entered = false;
+		this.next = false;
+	}
+	
+	draw(){
+		var rec2 = new rect(new vector2(this.base.position.x + this.base.size.x * roomBoarder - camOffset.x,this.base.position.y + this.base.size.y * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
+		
+		// entered
+		if (this.entered) {
+			rec2.draw("#605853")
+			// draw exits
+			if (this.roomData[1] == 1) {
+			  var pos = new vector2(this.base.position.x + roomSize.x / 2 - roomSize.x / 20  - camOffset.x,this.base.position.y - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#605853")
+			  }
+			}
+			if (this.roomData[1] == 2) {
+			  var pos = new vector2(this.base.position.x + roomSize.x - roomSize.x / 20 - camOffset.x,this.base.position.y + roomSize.x / 2 - roomSize.y / 20 - camOffset.y)
+			  var size = new vector2(roomSize.x/20,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#605853")
+			  }
+			}
+			if (this.roomData[1] == 3) {
+			  var pos = new vector2(this.base.position.x + roomSize.x / 2 - roomSize.x / 20 - camOffset.x,this.base.position.y + roomSize.y - roomSize.y / 20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/20)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#605853")
+			  }
+			}
+			if (this.roomData[1] == 4) {
+			  var pos = new vector2(this.base.position.x - camOffset.x,this.base.position.y + roomSize.x / 2 - roomSize.y / 20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#605853")
+			  }
+			}
+
+			//draw entreces
+			if (this.roomData[2] == 1) {
+			  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  rec.draw("#605853")
+			}
+			if (this.roomData[2] == 2) {
+			  var pos = new vector2(this.base.position.x+roomSize.x-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/20,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  rec.draw("#605853")
+			}
+			if (this.roomData[2] == 3) {
+			  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.y-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/20)
+			  var rec = new rect(pos,size)
+			  rec.draw("#605853")
+			}
+			if (this.roomData[2] == 4) {
+			  var pos = new vector2(this.base.position.x - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  rec.draw("#605853")
+			}
+		} 
+
+		//not entered
+		if (!this.entered) {
+			rec2.draw("#0d0d0d")
+		}
+		
+		//next room
+		if (this.next) {
+			rec2.draw("#1a1a1a")
+			if (this.roomData[2] == 1) {
+			  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#1a1a1a")
+			  }
+			}
+			if (this.roomData[2] == 2) {
+			  var pos = new vector2(this.base.position.x+roomSize.x-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#1a1a1a")
+			  }
+			}
+			if (this.roomData[2] == 3) {
+			  var pos = new vector2(this.base.position.x+roomSize.x/2-roomSize.x/20 - camOffset.x,this.base.position.y+roomSize.y-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#1a1a1a")
+			  }
+			}
+			if (this.roomData[2] == 4) {
+			  var pos = new vector2(this.base.position.x - camOffset.x,this.base.position.y+roomSize.x/2-roomSize.y/20 - camOffset.y)
+			  var size = new vector2(roomSize.x/10,roomSize.y/10)
+			  var rec = new rect(pos,size)
+			  if (enemys.length == 0) {
+				  rec.draw("#1a1a1a")
+			  }
+			}
+		} 
+
+		//decorations
+		if (this.roomData[1] == -1 && this.entered) {
+			var scale = new vector2(roomSize.x/2.5,roomSize.x/2.5)
+		  	context.drawImage(base_image, 
+		  		canvas.width / 2 - roomSize.x/2 + this.base.position.x - camOffset.x + roomSize.x/2 - scale.x/2,
+		  		canvas.height / 2 - roomSize.y/2 + this.base.position.y - camOffset.y + roomSize.y/2 - scale.y/2,scale.x,scale.y);
+		}
+
+		if (this.roomData[1] != -1 && this.roomData[2] != -1 && this.entered) {
+			for (let v in this.roomData[0]) {
+
+			  context.drawImage(this.roomData[0][v].img, 
+			  		this.base.position.x + this.base.size.x * 0 + canvas.width / 2 - roomSize.x/2 - camOffset.x - (this.roomData[0][v].size.x * (roomSize.x * 0.8)) / 2 + this.roomData[0][v].position.x * (roomSize.x * 0.9),
+			  		this.base.position.y + this.base.size.y * 0 + canvas.height / 2 - roomSize.y/2 - camOffset.y - (this.roomData[0][v].size.y * (roomSize.y* 0.8)) / 2 + this.roomData[0][v].position.y * (roomSize.y * 0.9),
+			  		this.roomData[0][v].size.x*(roomSize.x*0.8),this.roomData[0][v].size.y*(roomSize.y*0.8));
+			}
+		}
+	}
+}
+
 class Player {
 	constructor() {
 		this.position = new vector2();
@@ -472,6 +626,55 @@ class Player {
 		this.maxHealth = 100
 		this.health = this.maxHealth
 		this.curency = 0
+	}
+}
+
+class Grid {
+	constructor(size,defult = "akakaka") {
+		if (defult == "akakaka") {
+			console.warn("no defult value set")
+		} else {
+			this.defult = defult
+			this.size = size
+			this.map = []
+			for (let y = 0; y<=size.y-1; y++) {
+				this.map[y] = []
+				for (let v = 0; v<=size.x-1; v++) {
+					this.map[y][v] = defult
+				}
+			}
+		}
+	}
+
+	count(value) {
+		var a = 0;
+		for (let y = 0; y<=this.size.y-1; y++) {
+			for (let x = 0; x<=this.size.x-1; x++) {
+				if (this.get(x,y) == value) {
+					a++;
+				}
+			}
+		}
+		return a
+	}
+
+	get(x,y) {
+		try {
+			return this.map[y][x]
+		} catch (error) {
+		  console.error(error)
+		  return -1
+		}
+	}
+	getV2(position) {
+		return this.map[position.y][position.x]
+	}
+
+	set(x,y,val) {
+		this.map[y][x] = val
+	}
+	setV2(position,val) {
+		this.map[position.y][position.x] = val
 	}
 }
 
@@ -539,19 +742,34 @@ var oldCycleTime = 0;
 var cycleCount = 0;
 var fps_rate = '...';
 var mouse =  new vector2();
+var mapSize = new vector2(10,10);
+var map = new Grid(mapSize,0)
+var roomSize = new vector2(WIDTH,HEIGHT);
 var player = new Player()
 var floor = 1
+// var roomsAmt = floor*3
+// var holes = range(mapSize.x * mapSize.y - roomsAmt - 3 ,mapSize.x * mapSize.y - roomsAmt );
+// var atempts = 0
 var nextRoom = null
+// var lastRoom = null
+// var stop = 0
+// var endRoom = 0
 var def = true
+var camOffset = new vector2()
 var zoom = 0
 var bullets = []
 var keys = []
 var shootCount = 0
 var shootLimit = 61
 var db = false
+var shake = 0
+var curShake = 0
 var enemys = []
+var mapOffset = new vector2()
 var MaxDash = roomSize.x/10
 var look = 0
+var plrX = 0
+var plrY = 0
 var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
@@ -563,13 +781,6 @@ var shopItems = [
 var chances = [100,0,0]
 var puddles = [new puddle({x:50,y:50})]
 var moveablePixles = []
-//new vars
-
-var map = [new room({x:0,y:0}, -1, 1)]
-var camSpeed = 0.1
-var size = WIDTH || HEIGHT
-var curRoom = {x:0,y:0}
-var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
 
 // events
 {
@@ -643,6 +854,11 @@ var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
 	window.addEventListener('keyup',
 	function(e){
 		keys[e.keyCode] = false;
+		if (e.keyCode == 69 && menuState == 0) {
+			look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
+			player.vx += Math.sin(look)*(MaxDash)/8
+			player.vy += Math.cos(look)*(MaxDash)/8
+		}
 	},false);
 }
 
@@ -779,77 +995,224 @@ function randInt(min,max) {
 	return Math.floor(min+0.5) + Math.floor(Math.random() * (Math.floor(max+0.5)+1-Math.floor(min+0.5)));
 }
 
-function generateRoom(oldRoom) {
-  let flipDoors = [2,3,0,1]
-  let offsets = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
-  let position = {x: oldRoom.position.x + offsets[oldRoom.exit].x, y: oldRoom.position.y + offsets[oldRoom.exit].y}
-  let entr = flipDoors[oldRoom.exit]
-  let exit = -1
+function makeRoom(name, position, exitDoor, entrenceDoor) {
+	let Rect = new rect(new vector2(roomSize.x*position.x,roomSize.y*position.y),new vector2(roomSize.x,roomSize.y))
+	let decorations = []
+	for (let V = 0; V <= randInt(0,3); V++) {
+		let sizeCon = randInt(25,35)/200
+		let size = new vector2(sizeCon,sizeCon)
+		let pos = new vector2(randInt(10,90)/100,randInt(10,90)/100)
+		decorations.push(new deco(-1,pos,size))
+	}
+	let roomData = [decorations, exitDoor, entrenceDoor]
+	return new room(name, Rect, roomData)	
+};
 
-  let posible = [0,1,2,3]
-  for (var i = 0; i < 4; i++) {
-    let randPosition = randInt(0,posible.length-1)
-    let value = posible[randPosition]
-    posible.splice(randPosition,1)
-
-    if (value != entr) {
-      exit = value
-      break
+function makeMap() {
+  for (let y in map.map){
+    for (let x in map.map[y]) {
+      if (map.get(x,y) != 0) {
+        map.set(x,y,0)
+      }
     }
   }
-  
+  //old
+  {
+  // lastRoom = null
+  // var lastDoor = 0
 
-  curRoom=position
-  let newRoom = new room(position,entr,exit)
-  map.push(newRoom)
+  // var t = 100
+  // var g = 0
+  // while (g<=t) {
+  //  if (lastRoom == null) {
+  //    // var position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
+  //    let position = new vector2(0,0);
+  //    // if (endRoom != 0) {
+  //    //  position = new vector2(Math.floor(endRoom.base.position.x/roomSize.x) ,Math.floor(endRoom.base.position.y/roomSize.y))
+  //    // }
+  //    let exitDoor = -1
+  //    let entrenceDoor = -1
 
-  if (map.length > 4) {
-    map.splice(0,1)
-    map[0].entr = -1
+  //    var check = 0;
+  //    var posible = range(1,4)
+  //    for (let v = 1; v<= 4; v++) {
+  //      let c = randInt(0,posible.length-1)
+  //      let d = posible[c]
+  //      posible.splice(c,1);
+
+  //      if (d == 1 && position.y != 0 && map.get(position.x,position.y-1) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      } if (d == 3 && position.y != mapSize.y-1 && map.get(position.x,position.y+1) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      }if (d == 4 && position.x != 0 && map.get(position.x-1,position.y) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      } if (d == 2 && position.x != mapSize.x-1 && map.get(position.x+1,position.y) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      }
+  //    }
+
+  //    // console.log(exitDoors)
+      
+  //    lastDoor = exitDoor
+  //    let r = makeRoom("1",position,exitDoor,entrenceDoor)
+  //    r.entered = true
+  //    map.set(position.x,position.y,r)
+  //    lastRoom = r;
+  //    player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2)
+  //  } else {
+  //    let exitDoor = -1
+  //    let entrenceDoor = -1
+  //    let a = 0
+  //    if (lastDoor <= 2) {
+  //      a = lastDoor + 2
+  //    } else {
+  //      a = lastDoor - 2
+  //    }
+
+  //    entrenceDoor = a
+  //    let x = lastRoom.base.position.x/roomSize.x;
+  //    let y = lastRoom.base.position.y/roomSize.y;
+
+  //    if (a == 1) {
+  //      y++
+  //    }if (a == 2) {
+  //      x--
+  //    }if (a == 3) {
+  //      y--
+  //    }if (a == 4) {
+  //      x++
+  //    }
+
+  //    let check = 0
+  //    let posible = range(1,4)
+  //    for (let v = 1; v<= 4; v++) {
+  //      let c = randInt(0,posible.length-1)
+  //      let d = posible[c]
+  //      posible.splice(c,1);
+
+  //      if (d == 1 && y != 0 && map.get(x,y-1) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      } if (d == 3 && y != mapSize.y-1 && map.get(x,y+1) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      }if (d == 4 && x != 0 && map.get(x-1,y) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      } if (d == 2 && x != mapSize.x-1 && map.get(x+1,y) == 0) {
+  //        exitDoor = d
+  //        check++
+  //        break;
+  //      }
+  //    }
+  //    if (stop != 0) {
+  //      stop = 0
+  //      break
+  //    }
+  //    if (check == 0) {
+  //      stop++
+  //    }
+
+  //    var position = new vector2(x,y);
+
+  //    var r = makeRoom("2",position,exitDoor,entrenceDoor)
+  //    map.set(position.x,position.y,r)
+  //    lastRoom = r;
+  //    lastDoor = exitDoor
+  //  }
+  //  g++
+  // }
   }
-}
 
-function render() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-	context.fillStyle = "#333333";
-	context.fillRect(0,0,canvas.width,canvas.height)
-  let positions = [{x:size/2-size*0.1,y:0},{x:size-size*0.05,y:size/2-size*0.1},{x:size/2-size*0.1,y:size-size*0.05},{x:0,y:size/2-size*0.1}]
-  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
-  offset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2,speed),y:lerp(offset.y,curRoom.y*size-canvas.height/2,speed)}
-  for (var i = 0; i < map.length; i++) {
-    context.fillStyle = "#000000"
-    context.fillRect(map[i].position.x*size+size*0.05 - offset.x ,map[i].position.y*size+size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
+  //new
+  let offsets = [new vector2(0,-1),new vector2(1,0),new vector2(0,1),new vector2(-1,0)]
+  let flips = [3,4,1,2]
+  let lastRoom = null
+  let LastDoor = -1
 
-    if (map[i].entr != -1) {
-      context.fillStyle = "green"
-      context.fillRect(positions[map[i].entr].x+map[i].position.x*size - offset.x ,positions[map[i].entr].y+map[i].position.y*size - offset.y ,sizes[map[i].entr].x,sizes[map[i].entr].y)
+  for (let vvid = 1; vvid <= 4; vvid++) {
+    if (lastRoom == null) {
+      let position = new vector2(randInt(0,mapSize.x-1),randInt(0,mapSize.y-1));
+      let exit = -1
+      let enter = -1
+
+      let posibleExits = range(1,4)
+      for (let i = 1; i <= 4; i++) {
+        let c = randInt(0,posibleExits.length-1)
+        let d = posibleExits[c]
+        posibleExits.splice(c,1);
+
+        if (d == 1) if (position.y > 0) if (map.get(position.x,position.y-1) == 0) {exit = d; break}
+        if (d == 2) if (position.x < mapSize.x-1) if (map.get(position.x+1,position.y) == 0) {exit = d; break}
+        if (d == 3) if (position.y < mapSize.y-1) if (map.get(position.x,position.y+1) == 0) {exit = d; break}
+        if (d == 4) if (position.x > 0) if (map.get(position.x-1,position.y) == 0) {exit = d; break}
+      }
+
+      LastDoor = exit-1
+      let r = makeRoom("1",position,exit,enter)
+      r.entered = true
+      map.set(position.x,position.y,r)
+      lastRoom = position;
+      player.position = new vector2(position.x * roomSize.x + roomSize.x/2 , position.y * roomSize.y + roomSize.y/2) 
+
+      console.log("making room at:"+position.x+","+position.y) 
+      console.log("pointing at:",exit)      
+    } else {
+      let position = new vector2(lastRoom.x + offsets[LastDoor].x,lastRoom.y + offsets[LastDoor].y)
+      let exit = -1
+      let enter = flips[LastDoor]
+
+      let posibleExits = range(1,4)
+      for (let i = 1; i <= 4; i++) {
+        let c = randInt(0,posibleExits.length-1)
+        let d = posibleExits[c]
+        posibleExits.splice(c,1);
+
+        if (d == 1) if (position.y > 0) if (map.get(position.x,position.y-1) == 0) {exit = d; break}
+        if (d == 2) if (position.x < mapSize.x-1) if (map.get(position.x+1,position.y) == 0) {exit = d; break}
+        if (d == 3) if (position.y < mapSize.y-1) if (map.get(position.x,position.y+1) == 0) {exit = d; break}
+        if (d == 4) if (position.x > 0) if (map.get(position.x-1,position.y) == 0) {exit = d; break}
+      }
+
+      LastDoor = exit-1
+      lastRoom = position;
+      console.log("making room at:"+position.x+","+position.y) 
+      console.log("pointing at:",exit) 
+      console.log("comes from:",enter)
     }
-
-    context.fillStyle = "red"
-    context.fillRect(positions[map[i].exit].x+map[i].position.x*size - offset.x ,positions[map[i].exit].y+map[i].position.y*size - offset.y ,sizes[map[i].exit].x,sizes[map[i].exit].y)
-		
-		// for (let v in puddles) {
-		// 	puddles[v].update()
-		// }
-
-		// context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
-		// context.beginPath();
-		// context.arc(player.position.x, player.position.y, roomSize.x/20, 0, DOUBLE_PI);
-		// context.fill();
-
-		// for (let v in enemys) {
-		// 	context.drawImage(enemys[v].img,enemys[v].position.x + mapOffset.x - enemys[v].size.x / 2,enemys[v].position.y + mapOffset.y - enemys[v].size.y/2,enemys[v].size.x,enemys[v].size.y)
-		// }
-
   }
+};
 
-
-}
-
-function update() {
-	
-}
+// function gen() {
+// 	roomsAmt = floor*3
+// 	holes = range(mapSize.x * mapSize.y - roomsAmt - 10 ,mapSize.x * mapSize.y - roomsAmt );
+// 	makeMap();
+// 	while (true) {
+// 		atempts++
+// 		if (!holes.includes(map.count(0))) {
+// 			makeMap();
+// 		} else {
+// 			console.log("Holes:".concat(map.count(0)))
+// 			console.log("atempts:".concat(atempts))
+// 			break;
+// 		}
+// 	}
+// 	endRoom = lastRoom;
+// 	// document.title = "done"
+// 	def = false
+// 	atempts = 0;
+// }
 
 function gameLoop() {
 	// get and display fps
@@ -883,10 +1246,190 @@ function gameLoop() {
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
 			player.health+=player.maxHealth/1000
 		} 
+		if (player.health <= 0) {
+			menuState = 1
+			player.health = player.maxHealth
+			floor = 1
+			enemys = []
+			bullets = []
+			endRoom = 0
+			player.curency = 0
+			player.vx = 0
+			player.vy = 0 
+			gen()
+		}
 
-		render()
-		// update()
+		//change the title
+		if (def && document.title != "Personal intrest game") {
+			document.title = "Personal intrest game"
+		}
 
+		// adjust the window size and camera position
+		if (shake > curShake) curShake = lerp(curShake,shake,0.01)
+		if (shake < curShake) curShake = lerp(curShake,shake,0.1)
+		
+		camOffset.x = lerp(camOffset.x,Math.floor(player.position.x / roomSize.x) * roomSize.x,0.1)+randInt(-curShake,curShake)
+		camOffset.y = lerp(camOffset.y,Math.floor(player.position.y / roomSize.y) * roomSize.x,0.1)+randInt(-curShake,curShake)
+		mapOffset = new vector2(canvas.width / 2 - roomSize.x/2 - camOffset.x ,canvas.height / 2 - roomSize.y/2 - camOffset.y)
+
+		// clearing the screen
+		context.fillStyle = "#333333";
+		context.fillRect(0,0,canvas.width,canvas.height)
+
+		context.fillStyle = '#000000';
+		context.fillRect(mapOffset.x, mapOffset.y, roomSize.x*mapSize.x, roomSize.x*mapSize.y);
+
+		// draw map
+		{
+			for (let y in map.map){
+				for (let x in map.map[y]) {
+					var spot = map.get(x,y)
+					if (spot != 0) {
+						spot.draw()
+					} else {
+						var rec2 = new rect(new vector2(x * roomSize.x + roomSize.x * roomBoarder - camOffset.x,y * roomSize.y + roomSize.x * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
+						rec2.draw("#050505")
+					}
+				}
+			}
+			if (floor == 1) {
+				context.drawImage(startInfo,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)) 
+				var a = map.get(0,0).roomData[1][0]
+				if (a == 2 && map.get(1,0).entered == true) {
+					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x + roomSize.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y             ,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
+				}if (a == 3 && map.get(0,1).entered == true) {
+					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x             ,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y + roomSize.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
+				}
+			}
+		}
+		
+		// player movement
+		{
+			shootCount++
+			if (shootCount > shootLimit) shootCount = 0
+			if (shootCount % shootLimit == 0) db = false
+			
+			player.move = 0
+			player.strafe = 0
+			player.vx = lerp(player.vx,0,0.05)
+			player.vy = lerp(player.vy,0,0.05)
+
+			if (keys[87]) player.move += 1
+			if (keys[83]) player.move -= 1
+			if (keys[68]) player.strafe += 1
+			if (keys[65]) player.strafe -= 1
+
+			if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); curShake += 1;}
+			if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); curShake += 1;}
+			if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); curShake += 1;}
+			if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); curShake += 1;}
+
+			if (keys[32]) if (map.get(Math.floor(player.position.x / roomSize.x),Math.floor(player.position.y / roomSize.y)).roomData[1] == -1) {
+				nextFloor()
+			}
+
+			if (Math.abs(player.vx) > 0.01) {
+				player.position.x += player.vx
+				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
+				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+					player.position.x -= player.vx
+					player.vx = 0
+				}
+			}
+
+			if (Math.abs(player.vy) > 0.01) {
+				player.position.y += player.vy
+				var data = context.getImageData(player.position.x+mapOffset.x, player.position.y+mapOffset.y, 1, 1).data;
+				if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+					player.position.y -= player.vy
+					player.vy = 0
+				}
+			}
+
+			if (player.move != 0){
+				player.position.y -= player.move / 16 * player.speed
+			} 
+			if (player.strafe != 0) {
+				player.position.x += player.strafe / 16 * player.speed
+			};
+
+			if (keys[69]) {
+				look = Math.atan2(mouse.x-(player.position.x+mapOffset.x),mouse.y-(player.position.y+mapOffset.y))
+				for (let i = 1; i <= MaxDash; i++) {
+					var rayX = Math.sin(look)*i+player.position.x+mapOffset.x
+					var rayY = Math.cos(look)*i+player.position.y+mapOffset.y
+					var data = context.getImageData(rayX,rayY, 1, 1).data;
+					if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+						context.fillStyle = 'Green';
+						context.beginPath();
+						context.arc(player.position.x+mapOffset.x + Math.sin(look)*(i-1),player.position.y+mapOffset.y + Math.cos(look)*(i-1), roomSize.x/100, 0, DOUBLE_PI);
+						context.fill()
+						break
+					} else {
+						if (i==MaxDash) {
+							context.fillStyle = 'Green';
+							context.beginPath();
+							context.arc(player.position.x+mapOffset.x + Math.sin(look)*(MaxDash),player.position.y+mapOffset.y + Math.cos(look)*(MaxDash), roomSize.x/100, 0, DOUBLE_PI);
+							context.fill()
+						}
+					}
+				}
+			}
+		};
+		
+		for (let v in puddles) {
+			puddles[v].update()
+		}
+
+		// draw player
+		{
+			context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+			context.beginPath();
+			context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, roomSize.x/20, 0, DOUBLE_PI);
+			context.fill();
+	 	}
+
+	 	// room updates
+		{
+			plrX = Math.floor(player.position.x / roomSize.x)
+			plrY = Math.floor(player.position.y / roomSize.y)
+			if (nextRoom) nextRoom.next = false
+			if (map.get(plrX,plrY) != 0) {
+				if (map.get(plrX,plrY).entered == false) {
+					map.get(plrX,plrY).entered = true
+					enterRoom(map.get(plrX,plrY))
+				}
+				var a = map.get(plrX,plrY).roomData[1]
+				if (a == 1 && map.get(plrX,plrY-1).entered == false) {
+					map.get(plrX,plrY-1).next = true
+					nextRoom = map.get(plrX,plrY-1)
+				}if (a == 2 && map.get(plrX+1,plrY).entered == false) {
+					map.get(plrX+1,plrY).next = true
+					nextRoom = map.get(plrX+1,plrY)
+				}if (a == 3 && map.get(plrX,plrY+1).entered == false) {
+					map.get(plrX,plrY+1).next = true
+					nextRoom = map.get(plrX,plrY+1)
+				}if (a == 4 && map.get(plrX-1,plrY).entered == false) {
+					map.get(plrX-1,plrY).next = true
+					nextRoom = map.get(plrX-1,plrY)
+				}
+			}	
+		}
+
+		for (let v in enemys) {
+			enemys[v].update()
+		}
+
+		for (let v in bullets) {
+			bullets[v].draw(v)
+		}
+
+		zoom = lerp(zoom,roomSize.x*2.5,0.04)
+		context.fillStyle = "#0d0d0d";
+		context.beginPath();
+		context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, zoom, 0, 2 * Math.PI);
+		context.rect(canvas.width, 0,-canvas.width,canvas.height);
+		context.fill();
 	} else 
 	if (menuState == 2){
 		// draw old frame
@@ -1052,6 +1595,26 @@ function gameLoop() {
 		context.font = '50px Monospace';
 		context.fillText("Paused", 0, 250);
 	}	
+
+	// if (moveablePixles[0]) {
+	// 	moveablePixles[0].draw("#aa0000")
+	// 	context.fillStyle = "#aaaa00"
+
+	// 	let mouseX = Math.floor((mouse.x-mapOffset.x) / roomSize.x)
+	// 	let mouseY = Math.floor((mouse.y-mapOffset.y) / roomSize.y)
+
+
+	// 	if (map.get(mouseX,mouseY)) if (map.get(mouseX,mouseY).entered) {
+	// 		let position = new vector2(mouseX * roomSize.x - camOffset.x + roomSize.x * roomBoarder, mouseY * roomSize.y - camOffset.y + roomSize.y * roomBoarder)
+	// 		let size = new vector2(roomSize.x-roomSize.x*roomBoarder*2,roomSize.y-roomSize.y*roomBoarder*2)
+	// 		moveablePixles = [new rect(position,size)]
+	// 		moveablePixles.push(new rect(new vector2(),size))
+	// 	}
+
+	// 	context.beginPath();
+	// 	context.arc(mouse.x, mouse.y, roomSize.x/20, 0, DOUBLE_PI);
+	// 	context.fill();
+	// }
 	
 	setTimeout(gameLoop, cycleDelay);
 	
@@ -1062,8 +1625,9 @@ function gameLoop() {
 	context.fillText("Cur:"+player.curency, 0, 150);
 	context.fillText("Chances:"+chances, 0, 200);
 }
-window.onload = function() {
-	console.log("loaded"); 
-	sessionStorage.setItem("weights", JSON.stringify(chances));
-	gameLoop()
-}
+// window.onload = function() {
+// 	gen(); 
+// 	gameLoop()
+// 	console.log("loaded"); 
+// 	sessionStorage.setItem("weights", JSON.stringify(chances));
+// }
