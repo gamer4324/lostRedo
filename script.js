@@ -30,7 +30,7 @@ for (let img = 1; img <= imgages; img++) {
 class puddle {
 	constructor(pos) {
 		this.position = pos
-		this.rad = roomSize.x/40
+		this.rad = size/40
 		this.frame = 1
 		this.color = "#" + Math.floor(Math.random()*16777215).toString(16)
 		this.color = "#8a0303"
@@ -49,7 +49,7 @@ class puddle {
 			return false
 		}
 
-		if (this.rad-(this.frame/50)**2 <= roomSize.x/10/8 && !this.fade) {
+		if (this.rad-(this.frame/50)**2 <= size/10/8 && !this.fade) {
 			this.fade = true
 			this.fadeStart = this.frame
 			size = this.rad-(this.fadeStart/50)**2
@@ -63,7 +63,7 @@ class puddle {
 
 		context.fillStyle = this.color
 		context.beginPath();
-		context.arc(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
+		context.arc(this.position.x+canvas.width / 2 - size/2 - camOffset.x, this.position.y+canvas.height / 2 - size/2 - camOffset.y , 
 			Math.abs(size),
 			0, DOUBLE_PI);
 	  context.fill();
@@ -73,11 +73,11 @@ class puddle {
 
 class runner {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/runner.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.teir = 1
 	}
 
@@ -88,17 +88,20 @@ class runner {
 		} else {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			curShake = 1
 			player.health -= 2
+			shake+=1
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
+	render() {
+		context.drawImage(this.img,this.position.x - this.size.x / 2 - offset.x,this.position.y - this.size.y/2 - offset.y,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -110,31 +113,34 @@ class runner {
 
 class ghost {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/ghost.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.teir = 1
 	}
 
+	render() {
+		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
 	update() {
-		if (((this.position.x-mouse.x + mapOffset.x)**2+(this.position.y-mouse.y + mapOffset.y)**2)**0.5 >= (this.size.x)/2) {
-			this.position.x -= Math.sin(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
-			this.position.y -= Math.cos(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
+		if (((this.position.x-mouse.x- offset.x)**2+(this.position.y-mouse.y - offset.y)**2)**0.5 >= (this.size.x)/2) {
+			this.position.x -= Math.sin(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
+			this.position.y -= Math.cos(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
 		} else {
-			curShake = 1
 			player.health -= 1.5
+			shake+=1
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
 		
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -146,15 +152,19 @@ class ghost {
 
 class phantom {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/phantom.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.teir = 2
 		this.vx = 0
 		this.vy = 0
 		this.drag = randInt(10,100)/1000
+	}
+
+	render() {
+		context.drawImage(this.img,this.position.x -offset.x - this.size.x / 2,this.position.y -offset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	update() {
@@ -166,21 +176,20 @@ class phantom {
 		this.position.y += this.vy
 
 
-		if (((this.position.x-mouse.x + mapOffset.x)**2+(this.position.y-mouse.y + mapOffset.y)**2)**0.5 >= (this.size.x)/2) {
-			this.vx -= Math.sin(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
-			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x + mapOffset.x,this.position.y - mouse.y + mapOffset.y))/16*this.speed
+		if (((this.position.x-mouse.x- offset.x)**2+(this.position.y-mouse.y - offset.y)**2)**0.5 >= (this.size.x)/2) {
+			this.vx -= Math.sin(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
+			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
 		} else {
 			curShake = 1
 			player.health -= 5
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -192,16 +201,20 @@ class phantom {
 
 class shooter {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.side = randInt(1,4)
 		this.img = new Image();
 		this.img.src = "assests/enemys/shooter.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.canShoot = false
 		this.shootLimti = randInt(30,90)
 		this.count = randInt(1,Math.floor(this.shootLimti/2))
 		this.teir = 1
+	}
+
+	render() {
+		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	update() {
@@ -217,13 +230,13 @@ class shooter {
 
 
 		if (this.side == 1) {
-			this.position.y = Math.floor(player.position.y / roomSize.y) * roomSize.y + roomSize.y*0.9
+			this.position.y = Math.floor(player.position.y / size) * size + size*0.9
 		}if (this.side == 2){
-			this.position.x = Math.floor(player.position.x / roomSize.x) * roomSize.x + roomSize.x*0.1
+			this.position.x = Math.floor(player.position.x / size) * size + size*0.1
 		}if (this.side == 3){
-			this.position.y = Math.floor(player.position.y / roomSize.y) * roomSize.y + roomSize.y*0.1
+			this.position.y = Math.floor(player.position.y / size) * size + size*0.1
 		}if (this.side == 4){
-			this.position.x = Math.floor(player.position.x / roomSize.x) * roomSize.x + roomSize.x*0.9
+			this.position.x = Math.floor(player.position.x / size) * size + size*0.9
 		}
 
 		if (this.canShoot) {
@@ -233,14 +246,13 @@ class shooter {
 			bullets[a-1].position.x = this.position.x
 			bullets[a-1].position.y = this.position.y
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -252,11 +264,11 @@ class shooter {
 
 class blocker {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/blocker.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.countLimti = randInt(50,250)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
 		this.sheild = false
@@ -264,6 +276,17 @@ class blocker {
 		this.teir = 2
 	}
 	
+	render() {
+		if (this.sheild == true) { 
+			context.beginPath();
+	    context.strokeStyle = "#0000000";
+	    context.arc((this.position.x-offset.x),(this.position.y-offset.y),size/20*2,-this.anggle-Math.PI/4,-this.anggle+Math.PI/4);
+	    context.lineWidth = size/10
+			context.stroke();
+		}
+		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
 	update() {
 		this.count++;
 		if (this.count >= this.countLimti) this.count = 0;
@@ -276,15 +299,7 @@ class blocker {
 				this.speed *= 2
 			}
 		}
-		if (this.sheild == true) { 
-
-			context.beginPath();
-	    context.strokeStyle = "#0000000";
-	    context.arc((this.position.x + mapOffset.x),(this.position.y + mapOffset.y),roomSize.x/20*2,-this.anggle-Math.PI/4,-this.anggle+Math.PI/4);
-	    context.lineWidth = roomSize.x/10
-			context.stroke();
-
-		}
+		
 
 		//move and draw
 		if (((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 >= (this.size.y+this.size.x)/2) {
@@ -293,17 +308,16 @@ class blocker {
 		} else {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			curShake = 1
+			shake += 1
 			player.health -= 5
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -315,11 +329,11 @@ class blocker {
 
 class controller {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*2
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/8*0.7*(randInt(800,1200)/1000)*2
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/controller.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/10,size/10)
 		this.countLimti = randInt(60,180)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
 		this.state = false
@@ -353,8 +367,8 @@ class controller {
 	hit(pos,v) {
 		puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 		for (let v = 0; v < 3; v++) {
-			let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-			let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+			let xo = randInt(-size/10/8,size/10/8)
+			let yo = randInt(-size/10/8,size/10/8)
 			let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 			puddles.push(pud)
 		}
@@ -367,30 +381,55 @@ class controller {
 
 class doger {
 	constructor () {
-		this.speed = roomSize.x/8*0.7*(randInt(800,1200)/1000)*2
-		this.position = new vector2(Math.floor(player.position.x / roomSize.x)*roomSize.x+randInt(roomSize.x*0.1,roomSize.x*0.9),Math.floor(player.position.y / roomSize.y)*roomSize.y+randInt(roomSize.y*0.1,roomSize.y*0.9))
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)*2
+		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/doger.png";
-		this.size = new vector2(roomSize.x/10,roomSize.y/10)
+		this.size = new vector2(size/15,size/15)
 		this.teir = 1
 		this.vel = new vector2(0,0)
 	}
 
+	render() {
+		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
 	update() {
 		this.vel.x = lerp(this.vel.x,0,0.05)
-		this.vel.y = lerp(this.vel.y,0,0.05)
-
-		this.position.x += this.vel.x
-		var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
-		if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-			this.position.x -= this.vel.x
+		let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+	  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+	  let bulRoom = {x:Math.floor(this.position.x/size),y:Math.floor(this.position.y/size)}
+		let curCRoom = getRoom(bulRoom)
+		if(curCRoom == null){
+			bullets.splice(pos,1)
+			return
 		}
-
-		this.position.y += this.vel.y
-		var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
-		if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-			this.position.y -= this.vel.y
+		let main = (this.position.x >= curCRoom.position.x*size+size*0.05 && this.position.x <= curCRoom.position.x*size+size-size*0.05 && this.position.y >= curCRoom.position.y*size+size*0.05 && this.position.y <= curCRoom.position.y*size+size-size*0.05)
+		let entr = (curCRoom.entr != -1 && this.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && this.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+		let exit = (curCRoom.exit != -1 && this.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && this.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+		if (enemys.length != 0 && exit == true) {
+			entr = false
+			main = false
+			exit = false
+		} 
+		if (!(exit || main || entr)) {
+			bullets.splice(pos,1)
+			return
 		}
+		
+		// this.vel.y = lerp(this.vel.y,0,0.05)
+
+		// this.position.x += this.vel.x
+		// var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
+		// if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+		// 	this.position.x -= this.vel.x
+		// }
+
+		// this.position.y += this.vel.y
+		// var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
+		// if (data[0] == 0 && data[1] == 0 && data[2] == 0){
+		// 	this.position.y -= this.vel.y
+		// }
 
 		if (((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 >= (this.size.y+this.size.x)/2) {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
@@ -400,17 +439,15 @@ class doger {
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			curShake = 1
 			player.health -= 5
-		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
-		
+		}		
 	}
 
 	hit(pos,v) {
 		if (randInt(1,6)==6) {
 			puddles.push(new puddle({x:this.position.x,y:this.position.y}))
 			for (let v = 0; v < 3; v++) {
-				let xo = randInt(-roomSize.x/10/8,roomSize.x/10/8)
-				let yo = randInt(-roomSize.y/10/8,roomSize.y/10/8)
+				let xo = randInt(-size/10/8,size/10/8)
+				let yo = randInt(-size/10/8,size/10/8)
 				let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
 				puddles.push(pud)
 			}
@@ -460,9 +497,7 @@ class vector2 {
 
 class Player {
 	constructor() {
-		this.position = new vector2();
-		this.position.one()
-		this.position.multiply(10)
+		this.position = new vector2(size/2,size/2);
 		this.angle = Math.PI;
 		this.strafe = 0;
 		this.move = 0;
@@ -480,10 +515,17 @@ class bullet {
 		this.position = new vector2(player.position.x,player.position.y)
 		this.direction = direction
 		this.type = type
-		this.speed = roomSize.x/20
+		this.speed = size/40
 	}
 
-	draw(pos) {
+	render() {
+		context.fillStyle = 'Green';
+		context.beginPath();
+    context.arc(this.position.x - offset.x, this.position.y - offset.y , size/80, 0, DOUBLE_PI);
+    context.fill();
+	}
+
+	update(pos) {
 		if (this.direction == 1) {
 			this.position.y -= this.speed
 		} if (this.direction == 2) {
@@ -494,26 +536,36 @@ class bullet {
 			this.position.x -= this.speed
 		}
 
-		var data = context.getImageData(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 1, 1).data;
-		if (data[0] != 0 || data[1] != 0 || data[2] != 0){
-			context.fillStyle = 'Green';
-			context.beginPath();
-	    context.arc(this.position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, this.position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , roomSize.x/80, 0, DOUBLE_PI);
-	    context.fill();
-		} else {
+	  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+	  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+	  let bulRoom = {x:Math.floor(this.position.x/size),y:Math.floor(this.position.y/size)}
+		let curCRoom = getRoom(bulRoom)
+		if(curCRoom == null){
+			bullets.splice(pos,1)
+			return
+		}
+		let main = (this.position.x >= curCRoom.position.x*size+size*0.05 && this.position.x <= curCRoom.position.x*size+size-size*0.05 && this.position.y >= curCRoom.position.y*size+size*0.05 && this.position.y <= curCRoom.position.y*size+size-size*0.05)
+		let entr = (curCRoom.entr != -1 && this.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && this.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+		let exit = (curCRoom.exit != -1 && this.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && this.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+		if (enemys.length != 0 && exit == true) {
+			entr = false
+			main = false
+			exit = false
+		} 
+		if (!(exit || main || entr)) {
 			bullets.splice(pos,1)
 			return
 		}
 
-		if (this.type == "enemy" && ((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 <= roomSize.x/10) {
-			curShake = 1
+		if (this.type == "enemy" && (Math.sqrt(Math.pow(this.position.x-player.position.x,2)+Math.pow(this.position.y-player.position.y,2)) <= size/30)) {
+			shake += 5
 			player.health -= 25
 			bullets.splice(pos,1)
 		}
 
 		if (this.type == "player") {
 			for (let v in enemys) {
-				if (((this.position.x-enemys[v].position.x)**2+(this.position.y-enemys[v].position.y)**2)**0.5 <= roomSize.x/10) {
+				if (Math.sqrt(Math.pow(this.position.x-enemys[v].position.x,2)+Math.pow(this.position.y-enemys[v].position.y,2)) <= size/30) {
 					enemys[v].hit(pos,v)
 				}
 			}
@@ -533,10 +585,11 @@ class deco {
 }
 
 class room {
-  constructor(pos,entr,exit) {
+  constructor(pos,entr,exit,dirt) {
     this.position = pos
     this.exit = exit
     this.entr = entr
+    this.dirt = dirt
   }
 }
 
@@ -547,37 +600,34 @@ var oldCycleTime = 0;
 var cycleCount = 0;
 var fps_rate = '...';
 var mouse =  new vector2();
-var player = new Player()
 var floor = 1
-var nextRoom = null
-var def = true
-var zoom = 0
 var bullets = []
 var keys = []
 var shootCount = 0
 var shootLimit = 61
 var db = false
 var enemys = []
-var MaxDash = size/10
-var look = 0
 var menuState = 1
 var scrollMenu1 = 0 
 var scrollMenu2 = 0 
 var shopItems = [
-{name:"Max Health",price:2,timesBought:0,max:36},
+{name:"Max Health",price:2,timesBought:0,max:18},
 {name:"Shoot speed",price:10,timesBought:0,max:12},
 {name:"Walk speed",price:4,timesBought:0,max:16}
 ] 
 var chances = [100,0,0]
-var puddles = []
-var moveablePixles = []
 //new vars
 
-var map = [new room({x:0,y:0}, -1, 1)]
+var map = [new room({x:0,y:0}, -1, randInt(0,3),"B")]
+var mapCount = 1
 var camSpeed = 0.1
 var size = WIDTH || HEIGHT
 var curRoom = {x:0,y:0}
+var Boffset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
 var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
+var player = new Player()
+var puddles = []
+var shake = 0
 
 // events
 {
@@ -593,7 +643,7 @@ var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
 			        player.curency -= shopItems[i-1].price*(shopItems[i-1].timesBought+1)
 			        shopItems[i-1].timesBought++
 			        if (i == 1) {
-			        	player.maxHealth += 25
+			        	player.maxHealth += 12
 			        } else if (i == 2) {
 			        	shootLimit -= 5
 			        } else if (i == 3) {
@@ -604,49 +654,26 @@ var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
 			    }
 				} 
 			}
-		} else {
-      var di = 9999999999
-			var a = 0
-			for (let v of range(1,4)) {
-		    let o = new vector2()
-		    
-		    if (v==1){
-		        o.y -= 5
-		    }if (v==2){
-		       o.x += 5
-		    }if (v==3){
-		        o.y += 5
-		    }if (v==4){
-		        o.x -= 5
-		    }
-		    
-		    if (distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse) <= di) {
-		        di = distance(new vector2(player.position.x+mapOffset.x+o.x,player.position.y+mapOffset.y+o.y),mouse)
-		        a = v
-		    }
-			}
-			if (!db) {db = true; bullets.push(new bullet(a,"player")); curShake += 1} 
-		}
+		} 
 	});
 
 	document.addEventListener("mousemove", (event) => {
 		mouse.x = event.x
 		mouse.y = event.y
-		def = true
 	});
 
-	window.addEventListener("keydown",
-    function(e){
-      keys[e.keyCode] = true;
-			if (e.keyCode == 27) {
-				if (menuState == 0) {
-					menuState = 2
-				} else {
-					menuState = 0
-				}
+	document.addEventListener('keydown', function(event) {
+		keys[event.keyCode] = true;
+		if (event.keyCode == 27) {
+			if (menuState == 0) {
+				menuState = 2
+				document.body.exitPointerLock();
+			} else {
+				menuState = 0
+				document.body.requestPointerLock();
 			}
-    },
-  false);
+		}
+	})
 
 	window.addEventListener('keyup',
 	function(e){
@@ -700,11 +727,14 @@ function nextFloor() {
 		chances[2]=90
 	}
 	sessionStorage.setItem("weights", JSON.stringify(chances));
-	zoom = 0 
 	enemys = []
 	bullets = []
-	gen();
-	curShake = 50;
+	map = [new room({x:0,y:0}, -1, randInt(0,3),"B")]
+	player.position = {x:size/2,y:size/2}
+	mapCount = 1
+	curRoom = {x:0,y:0}
+	offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
+	shake += 50;
 }
 
 function weighted_random(items) {
@@ -730,33 +760,31 @@ function distance(pos1,pos2) {
 	return Math.sqrt((pos1.x-pos2.x)**2+(pos1.y-pos2.y)**2)
 }
 
-function enterRoom(room) {
-	if (room.roomData[1].length+room.roomData[2].length >= 2) {
-		for (let vds = 1; vds<=floor; vds++) {
-			// enemys.push(new runner())
-			let chance = weighted_random(["common","rare","epic"],chances)
-			console.log(chance)
-			if (chance == "common") {
-				var a = randInt(1,3)
-				if (a == 1) {
-					enemys.push(new ghost())
-				}if (a == 2) {
-					enemys.push(new shooter())
-				}if (a == 3) {
-					enemys.push(new runner())
-				}
-			} if (chance == "rare") {
-				var a = randInt(1,3)
-				if (a == 1) {
-					enemys.push(new blocker())
-				}if (a == 2) {
-					enemys.push(new doger())
-				}if (a == 3) {
-					enemys.push(new phantom())
-				}
-			} if (chance == "epic") {
-				enemys.push(new controller())
+function enterRoom() {
+	shake+=10
+	for (let vds = 1; vds<=floor; vds++) {
+		let chance = weighted_random(["common","rare","epic"],chances)
+		console.log(chance)
+		if (chance == "common") {
+			var a = randInt(1,3)
+			if (a == 1) {
+				enemys.push(new ghost())
+			}if (a == 2) {
+				enemys.push(new shooter())
+			}if (a == 3) {
+				enemys.push(new runner())
 			}
+		} if (chance == "rare") {
+			var a = randInt(1,3)
+			if (a == 1) {
+				enemys.push(new blocker())
+			}if (a == 2) {
+				enemys.push(new doger())
+			}if (a == 3) {
+				enemys.push(new phantom())
+			}
+		} if (chance == "epic") {
+			enemys.push(new controller())
 		}
 	}
 }
@@ -791,72 +819,241 @@ function generateRoom(oldRoom) {
   let flipDoors = [2,3,0,1]
   let offsets = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
   let position = {x: oldRoom.position.x + offsets[oldRoom.exit].x, y: oldRoom.position.y + offsets[oldRoom.exit].y}
+  let directions = [["B","L","S","R"],["R","B","L","S"],["S","R","B","L"],["L","S","R","B"]]
   let entr = flipDoors[oldRoom.exit]
   let exit = -1
 
-  let posible = [0,1,2,3]
-  for (var i = 0; i < 4; i++) {
-    let randPosition = randInt(0,posible.length-1)
-    let value = posible[randPosition]
-    posible.splice(randPosition,1)
-
-    if (value != entr) {
-      exit = value
-      break
-    }
+  mapCount++
+  if (floor*4 > mapCount) {
+	  let posible = [0,1,2,3]
+	  for (var i = 0; i < 4; i++) {
+	    let randPosition = randInt(0,posible.length-1)
+	    let value = posible[randPosition]
+	    let LRS = directions[entr][value]
+	    posible.splice(randPosition,1)
+	    if (value != entr && !(oldRoom.dirt == "L" && LRS == "L") && !(oldRoom.dirt == "R" && LRS == "R")) {
+	      exit = value
+	      break
+	    }
+	  }	
   }
   
-
-  curRoom=position
-  let newRoom = new room(position,entr,exit)
+  let newRoom = new room(position,entr,exit,directions[entr][exit])
   map.push(newRoom)
+
+  if (exit != -1 && entr != -1) enterRoom()
 
   if (map.length > 4) {
     map.splice(0,1)
     map[0].entr = -1
   }
+  return newRoom
+}
+
+function getRoom(position) {
+	for (var i = map.length - 1; i >= 0; i--) {
+		if(map[i].position.x == position.x && map[i].position.y == position.y) {
+			return map[i]
+		}
+	}
+	// console.error("no room at position:",position.x,position.y)
+	return null
 }
 
 function render() {
+	//draw map
+  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 	context.fillStyle = "#333333";
 	context.fillRect(0,0,canvas.width,canvas.height)
-  let positions = [{x:size/2-size*0.1,y:0},{x:size-size*0.05,y:size/2-size*0.1},{x:size/2-size*0.1,y:size-size*0.05},{x:0,y:size/2-size*0.1}]
-  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
-  offset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2,camSpeed)}
   for (var i = 0; i < map.length; i++) {
-    context.fillStyle = "#605853"
+
+		context.fillStyle = "#2E2E2E"
+    context.fillRect(map[i].position.x*size - offset.x ,map[i].position.y*size - offset.y ,size,size)
+		
+		context.fillStyle = "#605853"
     context.fillRect(map[i].position.x*size+size*0.05 - offset.x ,map[i].position.y*size+size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
 
     if (map[i].entr != -1) {
-      context.fillStyle = "green"
-      context.fillRect(positions[map[i].entr].x+map[i].position.x*size - offset.x ,positions[map[i].entr].y+map[i].position.y*size - offset.y ,sizes[map[i].entr].x,sizes[map[i].entr].y)
+    	if (enemys.length == 0 || (map[i].position.x == curRoom.x && map[i].position.y == curRoom.y)) {
+	      context.fillStyle = "605853"
+	      context.fillRect(positions[map[i].entr].x+map[i].position.x*size - offset.x ,positions[map[i].entr].y+map[i].position.y*size - offset.y ,sizes[map[i].entr].x,sizes[map[i].entr].y)
+	    }
     }
 
-    context.fillStyle = "red"
-    context.fillRect(positions[map[i].exit].x+map[i].position.x*size - offset.x ,positions[map[i].exit].y+map[i].position.y*size - offset.y ,sizes[map[i].exit].x,sizes[map[i].exit].y)
-		
-		// for (let v in puddles) {
-		// 	puddles[v].update()
-		// }
+    if (map[i].exit != -1) {
+    	if (enemys.length == 0) {
+		    context.fillStyle = "605853"
+		    context.fillRect(positions[map[i].exit].x+map[i].position.x*size - offset.x ,positions[map[i].exit].y+map[i].position.y*size - offset.y ,sizes[map[i].exit].x,sizes[map[i].exit].y)
+    	}
+    } else {
+    	context.drawImage(base_image,map[i].position.x*size - offset.x + size/2 - size*0.2,map[i].position.y*size - offset.y + size / 2 - size*0.2,size*0.4,size*0.4)
+    }
+  }
+  if (floor == 1) {
+		context.drawImage(startInfo, size*0.05 - offset.x , size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
+		let infoPos = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
+		if (getRoom(infoPos[map[0].exit]))	context.drawImage(startInfo2, infoPos[map[0].exit].x * size + size*0.05 - offset.x , infoPos[map[0].exit].y * size + size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
+	}
 
-		// context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
-		// context.beginPath();
-		// context.arc(player.position.x, player.position.y, roomSize.x/20, 0, DOUBLE_PI);
-		// context.fill();
+  //draw puddles
+  for (var i = 0; i < puddles.length; i++) {
+  	puddles[i].frame++
+		let size = puddles[i].rad-(puddles[i].frame/50)**2
 
-		// for (let v in enemys) {
-		// 	context.drawImage(enemys[v].img,enemys[v].position.x + mapOffset.x - enemys[v].size.x / 2,enemys[v].position.y + mapOffset.y - enemys[v].size.y/2,enemys[v].size.x,enemys[v].size.y)
-		// }
+		if (puddles[i].fade) {
+			if (1-(puddles[i].frame-puddles[i].fadeStart)/25 != Math.abs(1-(puddles[i].frame-puddles[i].fadeStart)/25)) {
+				puddles.splice(i,1)
+				continue
+			}
+			size = puddles[i].rad-(puddles[i].fadeStart/50)**2
+			context.globalAlpha = 1-(puddles[i].frame-puddles[i].fadeStart)/25
+		}
 
+
+		if (puddles[i].rad-(puddles[i].frame/50)**2 <= puddles[i].rad/2 && !puddles[i].fade) {
+			puddles[i].fade = true
+			puddles[i].fadeStart = puddles[i].frame
+		}
+
+		//fade in
+		if (puddles[i].frame/25>=1 && !puddles[i].fade) {
+			context.globalAlpha = 1
+		} else if(!puddles[i].fade) {
+			context.globalAlpha = puddles[i].frame/25
+		}
+
+		//draw
+		context.fillStyle = puddles[i].color
+		context.beginPath();
+		context.arc(puddles[i].position.x - size/2 - offset.x, puddles[i].position.y - size/2 - offset.y , 
+			Math.abs(size),
+			0, DOUBLE_PI);
+	  context.fill();
+	  context.globalAlpha = 1
   }
 
+  //draw bullets
+  for (var i = 0; i < bullets.length; i++) {
+  	bullets[i].render()
+  }
 
+	//draw player
+	{
+		context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+		context.beginPath();
+		context.arc(player.position.x-offset.x, player.position.y-offset.y, size/40, 0, DOUBLE_PI);
+		context.fill();
+ 	}
+
+ 	//draw enemies
+ 	for (var i = 0; i < enemys.length; i++) {
+ 		enemys[i].render()
+ 	}
 }
 
 function update() {
+	//cam update
+	shake=lerp(shake,0,0.05)
+	Boffset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2+size/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2+size/2,camSpeed)}
+  offset.x = Boffset.x+(Math.random()*2-1)*shake
+  offset.y = Boffset.y+(Math.random()*2-1)*shake
 
+	//move player
+	{
+		if (db) shootCount++
+		if (shootCount >= shootLimit) {
+			shootCount = 0
+			db = false
+		} 
+
+		player.move = 0
+		player.strafe = 0
+		if (keys[87]) player.move += 1
+		if (keys[83]) player.move -= 1
+		if (keys[68]) player.strafe += 1
+		if (keys[65]) player.strafe -= 1
+
+		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1}
+		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1}
+		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1}
+		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1}
+
+		if (keys[32] && getRoom(curRoom)) if (getRoom(curRoom).exit == -1) {
+			nextFloor()
+		}
+
+		if (player.move != 0){
+
+			player.position.y -= player.move / 32 * player.speed
+
+		  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+		  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+			let curCRoom = getRoom(curRoom)
+			if(curCRoom == null){
+				curCRoom = generateRoom(map[map.length-1])
+			}
+			let main = (player.position.x >= curCRoom.position.x*size+size*0.05 && player.position.x <= curCRoom.position.x*size+size-size*0.05 && player.position.y >= curCRoom.position.y*size+size*0.05 && player.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && player.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && player.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && player.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && player.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+
+			if (!(exit || main || entr)) {
+				player.position.y += player.move / 32 * player.speed
+			}
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+
+		} 
+		if (player.strafe != 0) {
+
+			player.position.x += player.strafe / 32 * player.speed
+
+		  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+		  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+			let curCRoom = getRoom(curRoom)
+			if(curCRoom == null){
+				curCRoom = generateRoom(map[map.length-1])
+			}
+			let main = (player.position.x >= curCRoom.position.x*size+size*0.05 && player.position.x <= curCRoom.position.x*size+size-size*0.05 && player.position.y >= curCRoom.position.y*size+size*0.05 && player.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && player.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && player.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && player.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && player.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+
+			if (!(exit || main || entr)) {
+				player.position.x -= player.strafe / 32 * player.speed
+			}
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+
+		}
+	}
+
+	//move bullets
+  for (var i = 0; i < bullets.length; i++) {
+  	bullets[i].update()
+  }
+
+	//move enemies
+ 	for (var i = 0; i < enemys.length; i++) {
+ 		enemys[i].update()
+ 	}
 }
 
 function gameLoop() {
@@ -893,90 +1090,16 @@ function gameLoop() {
 		} 
 
 		render()
-		// update()
+		update()
+
 
 	} else 
 	if (menuState == 2){
-		// draw old frame
-		mapOffset = new vector2(canvas.width / 2 - roomSize.x/2 - camOffset.x ,canvas.height / 2 - roomSize.y/2 - camOffset.y)
-
-		context.fillStyle = "#333333";
+		render()
+		context.globalAlpha = 0.5
+		context.fillStyle = "#000000";
 		context.fillRect(0,0,canvas.width,canvas.height)
-
-		context.fillStyle = '#000000';
-		context.fillRect(mapOffset.x, mapOffset.y, roomSize.x*mapSize.x, roomSize.x*mapSize.y);
-
-		// draw map
-		{
-			for (let y in map.map){
-				for (let x in map.map[y]) {
-					var spot = map.get(x,y)
-					if (spot != 0) {
-						spot.draw()
-					} else {
-						var rec2 = new rect(new vector2(x * roomSize.x + roomSize.x * roomBoarder - camOffset.x,y * roomSize.y + roomSize.x * roomBoarder - camOffset.y), new vector2(roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)))
-						rec2.draw("#050505")
-					}
-				}
-			}
-			if (floor == 1) {
-				context.drawImage(startInfo,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2)) 
-				var a = map.get(0,0).roomData[1][0]
-				if (a == 2 && map.get(1,0).entered == true) {
-					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x + roomSize.x,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y             ,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
-				}if (a == 3 && map.get(0,1).entered == true) {
-					context.drawImage(startInfo2,canvas.width / 2 - roomSize.x/2 + roomSize.x * roomBoarder - camOffset.x             ,canvas.height / 2 - roomSize.y/2 +roomSize.y * roomBoarder - camOffset.y + roomSize.y,roomSize.x-roomSize.x*(roomBoarder*2),roomSize.y-roomSize.y*(roomBoarder*2))
-				}
-			}
-		}
-
-	 	for (let v in puddles) {
-			let size = puddles[v].rad-(puddles[v].frame/50)**2
-
-			if (puddles[v].fade && 1-((puddles[v].frame-puddles[v].fadeStart)/25) > 0) {
-				context.globalAlpha = 1-((puddles[v].frame-puddles[v].fadeStart)/25)
-				size = puddles[v].rad-(puddles[v].fadeStart/50)**2
-			}
-
-			if (puddles[v].rad-(puddles[v].frame/50)**2 <= roomSize.x/10/8 && !puddles[v].fade) {
-				puddles[v].fade = true
-				puddles[v].fadeStart = puddles[v].frame
-				size = puddles[v].rad-(puddles[v].fadeStart/50)**2
-			}
-
-			if (puddles[v].frame/25>=1 && !puddles[v].fade) {
-				context.globalAlpha = 1
-			} else if(!puddles[v].fade) {
-				context.globalAlpha = puddles[v].frame/25
-			}
-
-			context.fillStyle = puddles[v].color
-			context.beginPath();
-			context.arc(puddles[v].position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, puddles[v].position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , 
-				Math.abs(size),
-				0, DOUBLE_PI);
-		  context.fill();
-		  context.globalAlpha = 1
-		}
-
-		// draw player
-		{
-			context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
-			context.beginPath();
-			context.arc(player.position.x+mapOffset.x, player.position.y+mapOffset.y, roomSize.x/20, 0, DOUBLE_PI);
-			context.fill();
-	 	}
-
-		for (let v in enemys) {
-			context.drawImage(enemys[v].img,enemys[v].position.x + mapOffset.x - enemys[v].size.x / 2,enemys[v].position.y + mapOffset.y - enemys[v].size.y/2,enemys[v].size.x,enemys[v].size.y)
-		}
-
-		for (let v in bullets) {
-			context.fillStyle = 'Green';
-			context.beginPath();
-	    context.arc(bullets[v].position.x+canvas.width / 2 - roomSize.x/2 - camOffset.x, bullets[v].position.y+canvas.height / 2 - roomSize.y/2 - camOffset.y , roomSize.x/80, 0, DOUBLE_PI);
-	    context.fill();
-		}
+		context.globalAlpha = 1
 		
 		// draw overlay
 		context.fillStyle = "#3f3f3f";
@@ -1038,23 +1161,23 @@ function gameLoop() {
 		
 		context.fillStyle = "#3f3f3f";
 		context.beginPath();
-		context.arc(scrollMenu2+roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
-		context.arc(scrollMenu2-roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/40, 0, DOUBLE_PI);
-		context.moveTo(scrollMenu2-roomSize.x/25,canvas.height/2+195+roomSize.x/40)
-		context.lineTo(scrollMenu2,canvas.height/2+160+roomSize.x/20)
-		context.lineTo(scrollMenu2+roomSize.x/25,canvas.height/2+195+roomSize.x/40)
+		context.arc(scrollMenu2+size/80,canvas.height/2+195+size/40, size/40, 0, DOUBLE_PI);
+		context.arc(scrollMenu2-size/80,canvas.height/2+195+size/40, size/40, 0, DOUBLE_PI);
+		context.moveTo(scrollMenu2-size/25,canvas.height/2+195+size/40)
+		context.lineTo(scrollMenu2,canvas.height/2+160+size/20)
+		context.lineTo(scrollMenu2+size/25,canvas.height/2+195+size/40)
 		context.fill();
-		context.fillRect(scrollMenu2-roomSize.x/60,canvas.height/2+195-roomSize.x/20+roomSize.x/20,roomSize.x/36,roomSize.x/20)
+		context.fillRect(scrollMenu2-size/60,canvas.height/2+195-size/20+size/20,size/36,size/20)
 
 		context.fillStyle = "#5f5f5f";
 		context.beginPath();
-		context.arc(scrollMenu2+roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/80, 0, DOUBLE_PI);
-		context.arc(scrollMenu2-roomSize.x/80,canvas.height/2+195+roomSize.x/40, roomSize.x/80, 0, DOUBLE_PI);
-		context.moveTo(scrollMenu2-roomSize.x/35,canvas.height/2+195+roomSize.x/40)
-		context.lineTo(scrollMenu2,canvas.height/2+160+roomSize.x/15)
-		context.lineTo(scrollMenu2+roomSize.x/35,canvas.height/2+195+roomSize.x/40)
+		context.arc(scrollMenu2+size/80,canvas.height/2+195+size/40, size/80, 0, DOUBLE_PI);
+		context.arc(scrollMenu2-size/80,canvas.height/2+195+size/40, size/80, 0, DOUBLE_PI);
+		context.moveTo(scrollMenu2-size/35,canvas.height/2+195+size/40)
+		context.lineTo(scrollMenu2,canvas.height/2+160+size/15)
+		context.lineTo(scrollMenu2+size/35,canvas.height/2+195+size/40)
 		context.fill();
-		context.fillRect(scrollMenu2-roomSize.x/60,canvas.height/2+195-roomSize.x/20+roomSize.x/20,roomSize.x/36,roomSize.x/25)
+		context.fillRect(scrollMenu2-size/60,canvas.height/2+195-size/20+size/20,size/36,size/25)
 
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
@@ -1064,6 +1187,7 @@ function gameLoop() {
 	setTimeout(gameLoop, cycleDelay);
 	
 	context.fillStyle = '#ffffff';
+	context.textAlign = "start"
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
 	context.fillText("Ver:"+40, 0, 100);

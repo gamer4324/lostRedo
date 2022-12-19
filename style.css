@@ -1,7 +1,3 @@
-p {
-  color: navy;
-  text-indent: 3px;
-  text-transform: lowercase;
-  margin: 0;
-  padding: 0;
+body {
+  overflow-y: hidden;
 }
