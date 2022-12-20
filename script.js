@@ -180,8 +180,8 @@ class phantom {
 			this.vx -= Math.sin(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
 			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
 		} else {
-			curShake = 1
-			player.health -= 5
+			shake = 1
+			player.health -= 2.5
 		}
 	}
 
@@ -333,13 +333,17 @@ class controller {
 		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/controller.png";
-		this.size = new vector2(size/10,size/10)
+		this.size = new vector2(size/15,size/15)
 		this.countLimti = randInt(60,180)
 		this.count = randInt(1,Math.floor(this.countLimti/2))
 		this.state = false
 		this.teir = 3
 	}
 	
+	render() {
+		context.drawImage(this.img,this.position.x -offset.x - this.size.x / 2,this.position.y -offset.y - this.size.y/2,this.size.x,this.size.y)
+	}
+
 	update() {
 		this.count++;
 		if (this.count >= this.countLimti) this.count = 0;
@@ -361,7 +365,6 @@ class controller {
 		} else {
 			player.health -= 50
 		}
-		context.drawImage(this.img,this.position.x + mapOffset.x - this.size.x / 2,this.position.y + mapOffset.y - this.size.y/2,this.size.x,this.size.y)
 	}
 
 	hit(pos,v) {
@@ -395,41 +398,48 @@ class doger {
 	}
 
 	update() {
-		this.vel.x = lerp(this.vel.x,0,0.05)
 		let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
 	  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
-	  let bulRoom = {x:Math.floor(this.position.x/size),y:Math.floor(this.position.y/size)}
+		this.vel.x = lerp(this.vel.x,0,0.05)
+		this.vel.y = lerp(this.vel.y,0,0.05)
+	  
+		this.position.x += this.vel.x
+		let bulRoom = {x:Math.floor(this.position.x/size),y:Math.floor(this.position.y/size)}
 		let curCRoom = getRoom(bulRoom)
 		if(curCRoom == null){
-			bullets.splice(pos,1)
-			return
+			this.position.x -= this.vel.x
+		} else {
+			let main = (this.position.x >= curCRoom.position.x*size+size*0.05 && this.position.x <= curCRoom.position.x*size+size-size*0.05 && this.position.y >= curCRoom.position.y*size+size*0.05 && this.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && this.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && this.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && this.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && this.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+			if (!(exit || main || entr)) {
+				this.position.x -= this.vel.x
+			}
 		}
-		let main = (this.position.x >= curCRoom.position.x*size+size*0.05 && this.position.x <= curCRoom.position.x*size+size-size*0.05 && this.position.y >= curCRoom.position.y*size+size*0.05 && this.position.y <= curCRoom.position.y*size+size-size*0.05)
-		let entr = (curCRoom.entr != -1 && this.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && this.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
-		let exit = (curCRoom.exit != -1 && this.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && this.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
-		if (enemys.length != 0 && exit == true) {
-			entr = false
-			main = false
-			exit = false
-		} 
-		if (!(exit || main || entr)) {
-			bullets.splice(pos,1)
-			return
+
+		this.position.y += this.vel.y
+		bulRoom = {x:Math.floor(this.position.x/size),y:Math.floor(this.position.y/size)}
+		curCRoom = getRoom(bulRoom)
+		if(curCRoom == null){
+			this.position.y -= this.vel.y
+		} else {
+			let main = (this.position.x >= curCRoom.position.x*size+size*0.05 && this.position.x <= curCRoom.position.x*size+size-size*0.05 && this.position.y >= curCRoom.position.y*size+size*0.05 && this.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && this.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && this.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && this.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && this.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && this.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && this.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+			if (!(exit || main || entr)) {
+				this.position.y -= this.vel.y
+			}
 		}
-		
-		// this.vel.y = lerp(this.vel.y,0,0.05)
-
-		// this.position.x += this.vel.x
-		// var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
-		// if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-		// 	this.position.x -= this.vel.x
-		// }
-
-		// this.position.y += this.vel.y
-		// var data = context.getImageData(this.position.x + mapOffset.x, this.position.y + mapOffset.y, 1, 1).data;
-		// if (data[0] == 0 && data[1] == 0 && data[2] == 0){
-		// 	this.position.y -= this.vel.y
-		// }
 
 		if (((this.position.x-player.position.x)**2+(this.position.y-player.position.y)**2)**0.5 >= (this.size.y+this.size.x)/2) {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
@@ -437,7 +447,7 @@ class doger {
 		} else {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			curShake = 1
+			shake += 1
 			player.health -= 5
 		}		
 	}
@@ -445,7 +455,7 @@ class doger {
 	hit(pos,v) {
 		if (randInt(1,6)==6) {
 			puddles.push(new puddle({x:this.position.x,y:this.position.y}))
-			for (let v = 0; v < 3; v++) {
+			for (let vi = 0; vi < 3; vi++) {
 				let xo = randInt(-size/10/8,size/10/8)
 				let yo = randInt(-size/10/8,size/10/8)
 				let pud = new puddle({x:this.position.x+xo,y:this.position.y+yo})
@@ -455,14 +465,12 @@ class doger {
 			enemys.splice(v,1)
 			bullets.splice(pos,1)
 		} else {
-			let a = 0
-			let b = 0
+			let flip = [-1,3,4,1,2]
+			let a = -1
+			let b = -1
+
 			if (bullets[pos]) {
-				if (bullets[pos].direction <= 2) {
-					b = bullets[pos].direction + 2
-				} else {
-					b = bullets[pos].direction - 2
-				}
+				b = flip[bullets[pos].direction]
 				while (true) {
 					let rnd = randInt(1,4)
 					if (rnd != bullets[pos].direction & rnd != b) {
@@ -856,7 +864,6 @@ function getRoom(position) {
 			return map[i]
 		}
 	}
-	// console.error("no room at position:",position.x,position.y)
 	return null
 }
 
@@ -1047,7 +1054,7 @@ function update() {
 
 	//move bullets
   for (var i = 0; i < bullets.length; i++) {
-  	bullets[i].update()
+  	bullets[i].update(i)
   }
 
 	//move enemies
