@@ -620,8 +620,9 @@ var scrollMenu1 = 0
 var scrollMenu2 = 0 
 var shopItems = [
 {name:"Max Health",price:2,timesBought:0,max:18},
-{name:"Shoot speed",price:10,timesBought:0,max:12},
-{name:"Walk speed",price:4,timesBought:0,max:16}
+{name:"Shoot Speed",price:10,timesBought:0,max:12},
+{name:"Walk Speed",price:4,timesBought:0,max:16},
+{name:"Full Heal",price:4,timesBought:0,max:32}
 ] 
 var chances = [100,0,0]
 //new vars
@@ -631,8 +632,8 @@ var mapCount = 1
 var camSpeed = 0.1
 var size = WIDTH || HEIGHT
 var curRoom = {x:0,y:0}
-var Boffset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
-var offset = {x:curRoom.x*size-canvas.width/2,y:curRoom.y*size-canvas.height/2}
+var Boffset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
+var offset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
 var player = new Player()
 var puddles = []
 var shake = 0
@@ -656,6 +657,8 @@ var shake = 0
 			        	shootLimit -= 5
 			        } else if (i == 3) {
 			        	player.speed += 10
+			        } else if (i == 4) {
+			        	player.health = player.maxHealth
 			        }
 			    	}
 						break
@@ -675,10 +678,8 @@ var shake = 0
 		if (event.keyCode == 27) {
 			if (menuState == 0) {
 				menuState = 2
-				document.body.exitPointerLock();
 			} else {
 				menuState = 0
-				document.body.requestPointerLock();
 			}
 		}
 	})
@@ -1092,6 +1093,33 @@ function gameLoop() {
 	} else 
 	if (menuState == 0){
 		//health handler
+		if (player.health <= 0) {
+			chances[0]=100
+			chances[1]=0
+			chances[2]=0
+			sessionStorage.setItem("weights", JSON.stringify(chances));
+			enemys = []
+			bullets = []
+			puddles = []
+			map = [new room({x:0,y:0}, -1, randInt(0,3),"B")]
+			player.position = {x:size/2,y:size/2}
+			player.maxHealth = 100
+			player.health = player.maxHealth
+			player.speed = size/8
+			shopItems = [
+				{name:"Max Health",price:2,timesBought:0,max:18},
+				{name:"Shoot Speed",price:10,timesBought:0,max:12},
+				{name:"Walk Speed",price:4,timesBought:0,max:16},
+				{name:"Full Heal",price:4,timesBought:0,max:32}
+			] 
+			player.curency = 0
+			shake = 0
+			shootLimit = 61
+			floor = 1
+			mapCount = 1
+			curRoom = {x:0,y:0}
+			offset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
+		}
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
 			player.health+=player.maxHealth/1000
 		} 
@@ -1134,7 +1162,7 @@ function gameLoop() {
 
 			context.textAlign = "center"
 			context.miterLimit = 3
-			context.font = '40px Monospace';
+			context.font = '30px Monospace';
 	   	context.strokeStyle = '#000000';
 			context.lineWidth = 8;
 			context.strokeText(shopItem.name+":"+shopItem.timesBought, p1.x+1000/len/2, p1.y-110/2);
