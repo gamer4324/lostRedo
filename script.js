@@ -13,11 +13,6 @@ const roomBoarder = 0.05;
 var base_image = new Image();
 base_image.src = "assests/images/exit.png";
 
-var startInfo = new Image()
-startInfo.src = "assests/images/start.png";
-var startInfo2 = new Image()
-startInfo2.src = "assests/images/start2.png";
-
 var imgages = 3
 var decorationImages = []
 for (let img = 1; img <= imgages; img++) {
@@ -88,7 +83,7 @@ class runner {
 		} else {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			player.health -= 2
+			if (randInt(1,100) >= player.doge)player.health -= 2-player.restance/10
 			shake+=1
 		}
 	}
@@ -130,7 +125,7 @@ class ghost {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
 		} else {
-			player.health -= 1.5
+			if (randInt(1,100) >= player.doge) player.health -= 1.5-player.restance/10
 			shake+=1
 		}
 	}
@@ -181,7 +176,7 @@ class phantom {
 			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
 		} else {
 			shake = 1
-			player.health -= 2.5
+			if (randInt(1,100) >= player.doge) player.health -= 2.5-player.restance/10
 		}
 	}
 
@@ -309,7 +304,7 @@ class blocker {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			shake += 1
-			player.health -= 5
+			if (randInt(1,100) >= player.doge) player.health -= 5-player.restance/10
 		}
 	}
 
@@ -363,7 +358,7 @@ class controller {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.health -= 50
+			if (randInt(1,100) >= player.doge) player.health -= 50-player.restance/10
 		}
 	}
 
@@ -448,7 +443,7 @@ class doger {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			shake += 1
-			player.health -= 5
+			if (randInt(1,100) >= player.doge) player.health -= 5-player.restance/10
 		}		
 	}
 
@@ -515,6 +510,9 @@ class Player {
 		this.maxHealth = 100
 		this.health = this.maxHealth
 		this.curency = 0
+		this.regenSpeed = 0
+		this.doge = 0
+		this.restance = 0
 	}
 }
 
@@ -567,7 +565,7 @@ class bullet {
 
 		if (this.type == "enemy" && (Math.sqrt(Math.pow(this.position.x-player.position.x,2)+Math.pow(this.position.y-player.position.y,2)) <= size/30)) {
 			shake += 5
-			player.health -= 25
+			if (randInt(1,100) >= player.doge) player.health -= 25-player.restance/10
 			bullets.splice(pos,1)
 		}
 
@@ -593,11 +591,19 @@ class deco {
 }
 
 class room {
-  constructor(pos,entr,exit,dirt) {
+  constructor(pos,entr,exit,dirt,abilty = null) {
     this.position = pos
     this.exit = exit
     this.entr = entr
     this.dirt = dirt
+    this.abilty = abilty
+  }
+
+  interact() {
+  	if (this.abilty == "regen") player.regenSpeed += 1
+  	if (this.abilty == "doge chance") player.doge += 1
+  	if (this.abilty == "restance") player.restance += 1
+  	this.abilty = null
   }
 }
 
@@ -637,6 +643,7 @@ var offset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.hei
 var player = new Player()
 var puddles = []
 var shake = 0
+var tut = true
 
 // events
 {
@@ -681,6 +688,8 @@ var shake = 0
 			} else {
 				menuState = 0
 			}
+		} if (event.keyCode == 67) {
+			tut = !tut
 		}
 	})
 
@@ -777,7 +786,7 @@ function enterRoom() {
 		if (chance == "common") {
 			var a = randInt(1,3)
 			if (a == 1) {
-				enemys.push(new ghost())
+				enemys.push(new runner())
 			}if (a == 2) {
 				enemys.push(new shooter())
 			}if (a == 3) {
@@ -790,7 +799,7 @@ function enterRoom() {
 			}if (a == 2) {
 				enemys.push(new doger())
 			}if (a == 3) {
-				enemys.push(new phantom())
+				enemys.push(new doger())
 			}
 		} if (chance == "epic") {
 			enemys.push(new controller())
@@ -831,6 +840,7 @@ function generateRoom(oldRoom) {
   let directions = [["B","L","S","R"],["R","B","L","S"],["S","R","B","L"],["L","S","R","B"]]
   let entr = flipDoors[oldRoom.exit]
   let exit = -1
+  let abilty = null
 
   mapCount++
   if (floor*4 > mapCount) {
@@ -845,9 +855,13 @@ function generateRoom(oldRoom) {
 	      break
 	    }
 	  }	
+	  if (randInt(1,5)==1 && floor != 1) {
+	  	let abitlys = ["regen","doge chance","restance"]
+	  	abilty = abitlys[randInt(0,2)]
+	  }
   }
   
-  let newRoom = new room(position,entr,exit,directions[entr][exit])
+  let newRoom = new room(position,entr,exit,directions[entr][exit],abilty)
   map.push(newRoom)
 
   if (exit != -1 && entr != -1) enterRoom()
@@ -870,12 +884,21 @@ function getRoom(position) {
 
 function render() {
 	//draw map
-  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
-  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-	context.fillStyle = "#333333";
+  
+	let startColor = '#202020'
+  let endColor = '#000000' 
+  
+  var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2)
+  gradient.addColorStop(0, startColor)
+  gradient.addColorStop(1, endColor)
+  context.fillStyle = gradient
 	context.fillRect(0,0,canvas.width,canvas.height)
+
+  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+  
   for (var i = 0; i < map.length; i++) {
 
 		context.fillStyle = "#2E2E2E"
@@ -900,11 +923,6 @@ function render() {
     	context.drawImage(base_image,map[i].position.x*size - offset.x + size/2 - size*0.2,map[i].position.y*size - offset.y + size / 2 - size*0.2,size*0.4,size*0.4)
     }
   }
-  if (floor == 1) {
-		context.drawImage(startInfo, size*0.05 - offset.x , size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
-		let infoPos = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
-		if (getRoom(infoPos[map[0].exit]))	context.drawImage(startInfo2, infoPos[map[0].exit].x * size + size*0.05 - offset.x , infoPos[map[0].exit].y * size + size*0.05 - offset.y ,size-size*0.1,size-size*0.1)
-	}
 
   //draw puddles
   for (var i = 0; i < puddles.length; i++) {
@@ -960,6 +978,32 @@ function render() {
  	for (var i = 0; i < enemys.length; i++) {
  		enemys[i].render()
  	}
+
+ 	//draw warning 
+ 	if (getRoom(curRoom).abilty != null && enemys.length == 0) {
+		context.textAlign = "center"
+		context.miterLimit = 3
+		context.font = '30px Monospace';
+		context.fillStyle = '#'+Math.floor(Math.random() * 16777215).toString(16);
+   	context.strokeStyle = '#000000';
+		context.lineWidth = 8;
+		context.strokeText("There is something in this room", canvas.width/2, canvas.height/2+size/2+20);
+		context.fillText("There is something in this room", canvas.width/2, canvas.height/2+size/2+20);
+	}
+
+	if (tut) {
+		context.textAlign = "right";
+		context.textBaseline = "top"
+		context.font = '30px Monospace';
+		context.fillStyle = "#ffffff"
+		let height = context.measureText("M").width * 1.6
+		context.fillText("WASD to move", canvas.width, 0)
+		context.fillText("Arrow keys to shoot", canvas.width, height)
+		context.fillText("Space to interact with room", canvas.width, height*2)
+		context.fillText("Esc to pause the game", canvas.width, height*3)
+		context.fillText("C to toggle this information", canvas.width, height*4)
+		context.textBaseline = "alphabetic"	
+	}
 }
 
 function update() {
@@ -983,11 +1027,16 @@ function update() {
 		if (keys[83]) player.move -= 1
 		if (keys[68]) player.strafe += 1
 		if (keys[65]) player.strafe -= 1
+		if (player.strafe != 0 && player.move != 0) {player.strafe /= 1.5; player.move /= 1.5}
 
 		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1}
 		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1}
 		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1}
 		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1}
+
+		if (getRoom(curRoom).abilty != null && enemys.length == 0 && keys[32]) {
+			getRoom(curRoom).interact()
+		}
 
 		if (keys[32] && getRoom(curRoom)) if (getRoom(curRoom).exit == -1) {
 			nextFloor()
@@ -1081,12 +1130,28 @@ function gameLoop() {
 	// 2) paused
 
 	if (menuState == 1) {
-		context.fillStyle = "#3D3D90";
+		let startColor = '#202020'
+	  let endColor = '#000000' 
+	  
+	  var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2)
+	  gradient.addColorStop(0, startColor)
+	  gradient.addColorStop(1, endColor)
+	  context.fillStyle = gradient
 		context.fillRect(0,0,canvas.width,canvas.height)
 		
-		context.fillStyle = "#1D3F6E";
+		context.fillStyle = "#202020";
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
+		context.fillStyle = "#404040";
+		context.fillRect((canvas.width/2-100)+60*0.1,(canvas.height/2-30)+60*0.1,200-60*0.2,60-60*0.2)
+		context.textAlign = "center"
+		context.font = '45px Monospace';
+   	context.strokeStyle = '#000000';
+		context.lineWidth = 10;
+		context.strokeText("Play", canvas.width/2, canvas.height/2+12)
+		context.fillStyle = '#ffffff';
+		context.fillText("Play", canvas.width/2, canvas.height/2+12)
 
+		context.textAlign = "start"
 		context.fillStyle = '#ffffff';
 		context.font = '50px Monospace';
 		context.fillText("Menu", 0, 250);
@@ -1121,8 +1186,11 @@ function gameLoop() {
 			offset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
 		}
 		if (cycleCount == 0 && player.health < player.maxHealth-player.maxHealth/1000) {
-			player.health+=player.maxHealth/1000
+			player.health+=player.maxHealth/1000*(player.regenSpeed/10)
 		} 
+		if (player.health > player.maxHealth) {
+			player.health = player.maxHealth
+		}
 
 		render()
 		update()
@@ -1137,10 +1205,14 @@ function gameLoop() {
 		context.globalAlpha = 1
 		
 		// draw overlay
+
+		//draw play button
 		context.fillStyle = "#3f3f3f";
 		context.fillRect(canvas.width/2-100,canvas.height/2-30,200,60)
 		context.fillStyle = "#5f5f5f"
 		context.fillRect(canvas.width/2-100+5,canvas.height/2-30+5,200-10,60-10)
+
+		//play text
 		context.textAlign = "center"
 		context.font = '50px Monospace';
    	context.strokeStyle = '#000000';
@@ -1151,6 +1223,29 @@ function gameLoop() {
 
 		context.fillStyle = "#3f3f3f";
 		context.fillRect(canvas.width/2-500,canvas.height/2+195,1000,-100)
+
+		context.fillStyle = "#3f3f3f";
+		context.fillRect(canvas.width/2-500,canvas.height/2-195/2,1000,-100)
+
+		let textsa = ["Regen Speed","Doge Chance","Resistance","IDK ATM"]
+		let textsav = [player.regenSpeed/10,player.doge,player.restance/10,"nill"]
+		for (var i = 0; i < 4; i++) {
+			let px = canvas.width/2-500+1000/4*i
+			let py = canvas.height/2-195/2
+			context.fillStyle = "#5f5f5f"
+			context.fillRect(px+5, py-5,240,-90)
+
+			context.textAlign = "center"
+			context.miterLimit = 3
+			context.font = '30px Monospace';
+	   	context.strokeStyle = '#000000';
+			context.fillStyle = 'white';
+			context.lineWidth = 8;
+			context.strokeText(textsa[i], px+1000/4/2, py-110/2);
+			context.fillText(textsa[i], px+1000/4/2, py-110/2);
+	    context.strokeText(textsav[i], px+1000/4/2, py-20);
+	    context.fillText(textsav[i], px+1000/4/2, py-20);
+		} 
 
 		for (let v in shopItems) {
 			let shopItem = shopItems[v]
@@ -1225,9 +1320,9 @@ function gameLoop() {
 	context.textAlign = "start"
 	context.font = '50px Monospace';
 	context.fillText("Fps:"+fps_rate, 0, 50);
-	context.fillText("Ver:"+40, 0, 100);
-	context.fillText("Cur:"+player.curency, 0, 150);
-	context.fillText("Chances:"+chances, 0, 200);
+	// context.fillText("Ver:"+40, 0, 100);
+	context.fillText("Cur:"+player.curency, 0, 100);
+	// context.fillText("Chances:"+chances, 0, 200);
 }
 window.onload = function() {
 	console.log("loaded"); 
