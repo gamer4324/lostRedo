@@ -9,6 +9,11 @@ const HEIGHT = 400;
 const DOUBLE_PI = 2 * Math.PI;
 const HALF_PI = Math.PI/2;
 const roomBoarder = 0.05;
+const link = document.querySelector('a');
+const href = link.getAttribute('href'); 
+const currentDirectory = href.substring(0, href.lastIndexOf('/'));
+const assests =  currentDirectory + '/assests'
+
 // images
 var groundTEX = new Image();
 groundTEX.src = "assests/images/groundTEX.png";
