@@ -226,10 +226,16 @@ class shooter {
 		this.shootLimti = randInt(60,90)
 		this.count = randInt(1,Math.floor(this.shootLimti/2))
 		this.teir = 1
+		this.dir = [0,Math.PI/2,Math.PI,Math.PI*1.5][this.side-1]
 	}
 
 	render() {
-		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+		// context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x,this.position.y - offset.y)
+		context.rotate(this.dir)
+		context.drawImage(player.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -547,6 +553,9 @@ class Player {
 		this.regenSpeed = 0
 		this.doge = 0
 		this.restance = 0
+		this.img = new Image();
+		this.img.src = "assests/images/player.png";
+		this.dir = 0
 	}
 }
 
@@ -1039,10 +1048,15 @@ function render() {
 
 	//draw player
 	{
-		context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
-		context.beginPath();
-		context.arc(player.position.x-offset.x, player.position.y-offset.y, size/40, 0, DOUBLE_PI);
-		context.fill();
+		// context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+		// context.beginPath();
+		// context.arc(player.position.x-offset.x, player.position.y-offset.y, size/40, 0, DOUBLE_PI);
+		// context.fill();
+		context.save()
+		context.translate(player.position.x-offset.x, player.position.y-offset.y)
+		context.rotate(Math.PI/2*player.dir)
+		context.drawImage(player.img,-size/40,-size/40,size/20,size/20)
+		context.restore()
  	}
 
  	//draw enemies
@@ -1100,10 +1114,10 @@ function update() {
 		if (keys[65]) player.strafe -= 1
 		if (player.strafe != 0 && player.move != 0) {player.strafe /= 1.5; player.move /= 1.5}
 
-		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
-		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
-		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
-		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
+		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 0}
+		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 1}
+		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
+		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
 
 		if (getRoom(curRoom).abilty != null && enemys.length == 0 && keys[32]) {
 			getRoom(curRoom).interact()
