@@ -10,10 +10,13 @@ const DOUBLE_PI = 2 * Math.PI;
 const HALF_PI = Math.PI/2;
 const roomBoarder = 0.05;
 // images
+var groundTEX = new Image();
+groundTEX.src = "assests/images/groundTEX.png";
+
 var base_image = new Image();
 base_image.src = "assests/images/exit.png";
 
-var imgages = 3
+var imgages = 0
 var decorationImages = []
 for (let img = 1; img <= imgages; img++) {
 	var curImage = new Image();
@@ -27,7 +30,7 @@ class puddle {
 		this.position = pos
 		this.rad = size/40
 		this.frame = 1
-		this.color = "#" + Math.floor(Math.random()*16777215).toString(16)
+		// this.color = "#" + Math.floor(Math.random()*16777215).toString(16)
 		this.color = "#8a0303"
 		this.fade = false
 		this.fadeStart = 0
@@ -83,13 +86,17 @@ class runner {
 		} else {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			if (randInt(1,100) >= player.doge)player.health -= 2-player.restance/10
+			if (randInt(1,100) >= player.doge*2)player.health -= 2-player.restance/10
 			shake+=1
 		}
 	}
 
 	render() {
-		context.drawImage(this.img,this.position.x - this.size.x / 2 - offset.x,this.position.y - this.size.y/2 - offset.y,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	hit(pos,v) {
@@ -117,7 +124,11 @@ class ghost {
 	}
 
 	render() {
-		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -125,10 +136,10 @@ class ghost {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))/16*this.speed
 		} else {
-			if (randInt(1,100) >= player.doge) player.health -= 1.5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 1.5-player.restance/10
 			shake+=1
 		}
-	}
+	} 
 
 	hit(pos,v) {
 		
@@ -159,7 +170,11 @@ class phantom {
 	}
 
 	render() {
-		context.drawImage(this.img,this.position.x -offset.x - this.size.x / 2,this.position.y -offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - mouse.x - offset.x,this.position.y - mouse.y - offset.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -176,7 +191,7 @@ class phantom {
 			this.vy -= Math.cos(Math.atan2(this.position.x - mouse.x -offset.x,this.position.y - mouse.y -offset.y))/16*this.speed
 		} else {
 			shake = 1
-			if (randInt(1,100) >= player.doge) player.health -= 2.5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 2.5-player.restance/10
 		}
 	}
 
@@ -203,7 +218,7 @@ class shooter {
 		this.img.src = "assests/enemys/shooter.png";
 		this.size = new vector2(size/15,size/15)
 		this.canShoot = false
-		this.shootLimti = randInt(30,90)
+		this.shootLimti = randInt(60,90)
 		this.count = randInt(1,Math.floor(this.shootLimti/2))
 		this.teir = 1
 	}
@@ -240,6 +255,7 @@ class shooter {
 			var a = bullets.push(new bullet(this.side,"enemy"))
 			bullets[a-1].position.x = this.position.x
 			bullets[a-1].position.y = this.position.y
+			new Audio("assests/audio/shoot.mp3").play()
 		}
 	}
 
@@ -279,7 +295,11 @@ class blocker {
 	    context.lineWidth = size/10
 			context.stroke();
 		}
-		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -304,7 +324,7 @@ class blocker {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			shake += 1
-			if (randInt(1,100) >= player.doge) player.health -= 5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 5-player.restance/10
 		}
 	}
 
@@ -324,7 +344,7 @@ class blocker {
 
 class controller {
 	constructor () {
-		this.speed = size/8*0.7*(randInt(800,1200)/1000)*2
+		this.speed = size/16*0.7*(randInt(800,1200)/1000)*2
 		this.position = new vector2(Math.floor(player.position.x / size)*size+randInt(size*0.1,size*0.9),Math.floor(player.position.y / size)*size+randInt(size*0.1,size*0.9))
 		this.img = new Image();
 		this.img.src = "assests/enemys/controller.png";
@@ -336,7 +356,11 @@ class controller {
 	}
 	
 	render() {
-		context.drawImage(this.img,this.position.x -offset.x - this.size.x / 2,this.position.y -offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -358,7 +382,8 @@ class controller {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			if (randInt(1,100) >= player.doge) player.health -= 50-player.restance/10
+			shake += 5
+			if (randInt(1,100) >= player.doge*2) player.health -= 50-player.restance/10
 		}
 	}
 
@@ -389,7 +414,11 @@ class doger {
 	}
 
 	render() {
-		context.drawImage(this.img,this.position.x - offset.x - this.size.x / 2,this.position.y - offset.y - this.size.y/2,this.size.x,this.size.y)
+		context.save()
+		context.translate(this.position.x - offset.x, this.position.y - offset.y)
+		context.rotate(-Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.restore()
 	}
 
 	update() {
@@ -443,7 +472,7 @@ class doger {
 			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
 			shake += 1
-			if (randInt(1,100) >= player.doge) player.health -= 5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 5-player.restance/10
 		}		
 	}
 
@@ -565,7 +594,7 @@ class bullet {
 
 		if (this.type == "enemy" && (Math.sqrt(Math.pow(this.position.x-player.position.x,2)+Math.pow(this.position.y-player.position.y,2)) <= size/30)) {
 			shake += 5
-			if (randInt(1,100) >= player.doge) player.health -= 25-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 25-player.restance/10
 			bullets.splice(pos,1)
 		}
 
@@ -573,6 +602,7 @@ class bullet {
 			for (let v in enemys) {
 				if (Math.sqrt(Math.pow(this.position.x-enemys[v].position.x,2)+Math.pow(this.position.y-enemys[v].position.y,2)) <= size/30) {
 					enemys[v].hit(pos,v)
+					new Audio("assests/audio/hit.mp3").play()
 				}
 			}
 		}
@@ -597,12 +627,16 @@ class room {
     this.entr = entr
     this.dirt = dirt
     this.abilty = abilty
+    this.imgPos = {x: Math.floor(Math.random() * (800 - size/16)), y: Math.floor(Math.random() * (800 - size/16))}
   }
 
   interact() {
-  	if (this.abilty == "regen") player.regenSpeed += 1
-  	if (this.abilty == "doge chance") player.doge += 1
-  	if (this.abilty == "restance") player.restance += 1
+  	if (this.abilty == "+regen") player.regenSpeed += 1
+  	if (this.abilty == "+doge chance") player.doge += 2
+  	if (this.abilty == "+restance") player.restance += 1
+  	if (this.abilty == "++regen") player.regenSpeed += 2
+  	if (this.abilty == "++doge chance") player.doge += 4
+  	if (this.abilty == "++restance") player.restance += 2
   	this.abilty = null
   }
 }
@@ -628,15 +662,15 @@ var shopItems = [
 {name:"Max Health",price:2,timesBought:0,max:18},
 {name:"Shoot Speed",price:10,timesBought:0,max:12},
 {name:"Walk Speed",price:4,timesBought:0,max:16},
-{name:"Full Heal",price:4,timesBought:0,max:32}
+{name:"Good Pick up",price:0,timesBought:0,max:3200}
 ] 
 var chances = [100,0,0]
 //new vars
 
-var map = [new room({x:0,y:0}, -1, randInt(0,3),"B")]
 var mapCount = 1
 var camSpeed = 0.1
 var size = WIDTH || HEIGHT
+var map = [new room({x:0,y:0}, -1, randInt(0,3),"B")]
 var curRoom = {x:0,y:0}
 var Boffset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
 var offset = {x:curRoom.x*size-canvas.width/2+size/2,y:curRoom.y*size-canvas.height/2+size/2}
@@ -665,8 +699,17 @@ var tut = true
 			        } else if (i == 3) {
 			        	player.speed += 10
 			        } else if (i == 4) {
-			        	player.health = player.maxHealth
+						  	let chances = [5,5,5,1,1,1]
+						  	let abitlys = ["+regen","+doge chance","+restance","++regen","++doge chance","++restance"]
+						  	abilty = weighted_random(abitlys,chances)
+						  	if (abilty == "+regen") player.regenSpeed += 1
+						  	if (abilty == "+doge chance") player.doge += 2
+						  	if (abilty == "+restance") player.restance += 1
+						  	if (abilty == "++regen") player.regenSpeed += 2
+						  	if (abilty == "++doge chance") player.doge += 4
+						  	if (abilty == "++restance") player.restance += 2
 			        }
+							new Audio("assests/audio/button.mp3").play()
 			    	}
 						break
 			    }
@@ -755,9 +798,9 @@ function nextFloor() {
 	shake += 50;
 }
 
-function weighted_random(items) {
+function weighted_random(items,chances) {
   let i;
-  let a = JSON.parse(sessionStorage.getItem("weights"))	
+  let a = chances
 	for (i = 0; i < a.length; i++)
     a[i] += a[i - 1] || 0;
   
@@ -781,6 +824,7 @@ function distance(pos1,pos2) {
 function enterRoom() {
 	shake+=10
 	for (let vds = 1; vds<=floor; vds++) {
+	  let chances = JSON.parse(sessionStorage.getItem("weights"))	
 		let chance = weighted_random(["common","rare","epic"],chances)
 		console.log(chance)
 		if (chance == "common") {
@@ -855,12 +899,13 @@ function generateRoom(oldRoom) {
 	      break
 	    }
 	  }	
-	  if (randInt(1,5)==1 && floor != 1) {
-	  	let abitlys = ["regen","doge chance","restance"]
-	  	abilty = abitlys[randInt(0,2)]
+	  if (randInt(1,2)==1 && floor != 1) {
+	  	let chances = [5,5,5,1,1,1]
+	  	let abitlys = ["+regen","+doge chance","+restance","++regen","++doge chance","++restance"]
+	  	abilty = weighted_random(abitlys,chances)
 	  }
   }
-  
+
   let newRoom = new room(position,entr,exit,directions[entr][exit],abilty)
   map.push(newRoom)
 
@@ -888,8 +933,17 @@ function render() {
   canvas.height = window.innerHeight;
   
 	let startColor = '#202020'
+
+	var r = Math.round((53/12)*(floor-1)+32).toString(16);
+  var g = Math.round((-29/24)*(floor-1)+32).toString(16);
+  var b = Math.round((-29/24)*(floor-1)+32).toString(16);
+  r = r.length == 1 ? "0" + r : r;
+  g = g.length == 1 ? "0" + g : g;
+  b = b.length == 1 ? "0" + b : b;
+  startColor = "#" + r + g + b;
+
   let endColor = '#000000' 
-  
+
   var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2)
   gradient.addColorStop(0, startColor)
   gradient.addColorStop(1, endColor)
@@ -898,6 +952,8 @@ function render() {
 
   let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
   let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+  let imgPos = [{x:11,y:-1},{x:25,y:-11},{x:11,y:-25},{x:-1,y:11}]
+  let imgSize = [{x:3,y:2},{x:2,y:3},{x:3,y:2},{x:2,y:3}]
   
   for (var i = 0; i < map.length; i++) {
 
@@ -909,19 +965,29 @@ function render() {
 
     if (map[i].entr != -1) {
     	if (enemys.length == 0 || (map[i].position.x == curRoom.x && map[i].position.y == curRoom.y)) {
-	      context.fillStyle = "605853"
+	      context.fillStyle = "#605853"
 	      context.fillRect(positions[map[i].entr].x+map[i].position.x*size - offset.x ,positions[map[i].entr].y+map[i].position.y*size - offset.y ,sizes[map[i].entr].x,sizes[map[i].entr].y)
 	    }
     }
 
     if (map[i].exit != -1) {
     	if (enemys.length == 0) {
-		    context.fillStyle = "605853"
+		    context.fillStyle = "#605853"
+		    context.fillRect(positions[map[i].exit].x+map[i].position.x*size - offset.x ,positions[map[i].exit].y+map[i].position.y*size - offset.y ,sizes[map[i].exit].x,sizes[map[i].exit].y)
+    	}else {
+		    context.fillStyle = "#7B3F00"
 		    context.fillRect(positions[map[i].exit].x+map[i].position.x*size - offset.x ,positions[map[i].exit].y+map[i].position.y*size - offset.y ,sizes[map[i].exit].x,sizes[map[i].exit].y)
     	}
     } else {
     	context.drawImage(base_image,map[i].position.x*size - offset.x + size/2 - size*0.2,map[i].position.y*size - offset.y + size / 2 - size*0.2,size*0.4,size*0.4)
     }
+
+		context.imageSmoothingEnabled = false
+		context.globalAlpha = 0.03
+	  context.drawImage(groundTEX, map[i].imgPos.x, map[i].imgPos.y, size/16, size/16, map[i].position.x*size+size*0.05 - offset.x, map[i].position.y*size+size*0.05 - offset.y, size-size*0.1, size-size*0.1);
+	  // context.drawImage(groundTEX, map[i].imgPos.x, map[i].imgPos.y, size/16, size/16, map[i].position.x*size - offset.x, map[i].position.y*size - offset.y, size, size);
+		context.globalAlpha = 1
+
   }
 
   //draw puddles
@@ -1012,7 +1078,7 @@ function update() {
 	Boffset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2+size/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2+size/2,camSpeed)}
   offset.x = Boffset.x+(Math.random()*2-1)*shake
   offset.y = Boffset.y+(Math.random()*2-1)*shake
-
+	// console.log(shake)
 	//move player
 	{
 		if (db) shootCount++
@@ -1029,10 +1095,10 @@ function update() {
 		if (keys[65]) player.strafe -= 1
 		if (player.strafe != 0 && player.move != 0) {player.strafe /= 1.5; player.move /= 1.5}
 
-		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1}
-		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1}
-		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1}
-		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1}
+		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
+		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
+		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
+		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play()}
 
 		if (getRoom(curRoom).abilty != null && enemys.length == 0 && keys[32]) {
 			getRoom(curRoom).interact()
@@ -1116,7 +1182,7 @@ function update() {
 function gameLoop() {
 	// get and display fps
 	cycleCount+=180/Math.PI;
-	if (cycleCount >= 60) cycleCount = 0;
+	if (cycleCount >= 60) cycleCount = 0; 
 	var startTime = Date.now();
 	var cycleTime = startTime - oldCycleTime;
 	oldCycleTime = startTime;
@@ -1127,10 +1193,23 @@ function gameLoop() {
 	
 	// 1) menu
 	// 0) playing
-	// 2) paused
+	// 2) pause
+
+	player.regenSpeed = Math.max(0, Math.min(player.regenSpeed, 500))
+	player.doge = Math.max(0, Math.min(player.doge, 50))
+	player.restance = Math.max(0, Math.min(player.restance, 500))
 
 	if (menuState == 1) {
 		let startColor = '#202020'
+
+		var r = Math.round((53/12)*(floor-1)+32).toString(16);
+	  var g = Math.round((-29/24)*(floor-1)+32).toString(16);
+	  var b = Math.round((-29/24)*(floor-1)+32).toString(16);
+	  r = r.length == 1 ? "0" + r : r;
+	  g = g.length == 1 ? "0" + g : g;
+	  b = b.length == 1 ? "0" + b : b;
+	  startColor = "#" + r + g + b;
+
 	  let endColor = '#000000' 
 	  
 	  var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2)
@@ -1175,7 +1254,7 @@ function gameLoop() {
 				{name:"Max Health",price:2,timesBought:0,max:18},
 				{name:"Shoot Speed",price:10,timesBought:0,max:12},
 				{name:"Walk Speed",price:4,timesBought:0,max:16},
-				{name:"Full Heal",price:4,timesBought:0,max:32}
+				{name:"Good Pick up",price:0,timesBought:0,max:3200}
 			] 
 			player.curency = 0
 			shake = 0
@@ -1313,7 +1392,7 @@ function gameLoop() {
 		context.font = '50px Monospace';
 		context.fillText("Paused", 0, 250);
 	}	
-	
+
 	setTimeout(gameLoop, cycleDelay);
 	
 	context.fillStyle = '#ffffff';
