@@ -234,7 +234,7 @@ class shooter {
 		context.save()
 		context.translate(this.position.x - offset.x,this.position.y - offset.y)
 		context.rotate(this.dir)
-		context.drawImage(player.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
+		context.drawImage(this.img,-this.size.x/2,-this.size.y/2,this.size.x,this.size.y)
 		context.restore()
 	}
 
@@ -848,7 +848,7 @@ function enterRoom() {
 			}if (a == 2) {
 				enemys.push(new shooter())
 			}if (a == 3) {
-				enemys.push(new runner())
+				enemys.push(new ghost())
 			}
 		} if (chance == "rare") {
 			var a = randInt(1,3)
@@ -857,7 +857,7 @@ function enterRoom() {
 			}if (a == 2) {
 				enemys.push(new doger())
 			}if (a == 3) {
-				enemys.push(new doger())
+				enemys.push(new phantom())
 			}
 		} if (chance == "epic") {
 			enemys.push(new controller())
