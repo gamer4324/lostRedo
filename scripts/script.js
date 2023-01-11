@@ -606,7 +606,7 @@ class bullet {
 			return
 		}
 
-		if (this.type == "enemy" && (Math.sqrt(Math.pow(this.position.x-player.position.x,2)+Math.pow(this.position.y-player.position.y,2)) <= size/30)) {
+		if (this.type == "enemy" && (Math.sqrt(Math.pow(this.position.x-player.position.x,2)+Math.pow(this.position.y-player.position.y,2)) <= size/30*1.3333)) {
 			shake += 5
 			if (randInt(1,100) >= player.doge*2) player.health -= 25-player.restance/10
 			bullets.splice(pos,1)
@@ -1049,13 +1049,10 @@ function render() {
 	//draw player
 	{
 		// context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
-		// context.beginPath();
-		// context.arc(player.position.x-offset.x, player.position.y-offset.y, size/40, 0, DOUBLE_PI);
-		// context.fill();
 		context.save()
 		context.translate(player.position.x-offset.x, player.position.y-offset.y)
 		context.rotate(Math.PI/2*player.dir)
-		context.drawImage(player.img,-size/40,-size/40,size/20,size/20)
+		context.drawImage(player.img,-size/30,-size/30,size/15,size/15)
 		context.restore()
  	}
 
