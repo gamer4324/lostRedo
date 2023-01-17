@@ -18,6 +18,9 @@ const assests =  currentDirectory + '/assests'
 var groundTEX = new Image();
 groundTEX.src = "assests/images/groundTEX.png";
 
+var battery = new Image();
+battery.src = "assests/images/battery.png";
+
 var base_image = new Image();
 base_image.src = "assests/images/exit.png";
 
@@ -35,8 +38,11 @@ class puddle {
 		this.position = pos
 		this.rad = size/40
 		this.frame = 1
+		let c = Math.floor(Math.random() * (28 - 0 + 1))
+		this.color = "rgb("+c+","+c+","+c+")"
+		// this.color = "rgb("+Math.floor(Math.random() * (128 - 0 + 1))+","+Math.floor(Math.random() * (128 - 0 + 1))+","+Math.floor(Math.random() * (128 - 0 + 1))+")"
 		// this.color = "#" + Math.floor(Math.random()*16777215).toString(16)
-		this.color = "#8a0303"
+		// this.color = "#8a0303"
 		this.fade = false
 		this.fadeStart = 0
 	}
@@ -616,6 +622,7 @@ class bullet {
 			for (let v in enemys) {
 				if (Math.sqrt(Math.pow(this.position.x-enemys[v].position.x,2)+Math.pow(this.position.y-enemys[v].position.y,2)) <= size/30) {
 					enemys[v].hit(pos,v)
+					player.health+=player.maxHealth/20
 					new Audio("assests/audio/hit.mp3").play()
 				}
 			}
@@ -692,6 +699,8 @@ var player = new Player()
 var puddles = []
 var shake = 0
 var tut = true
+var shootSound
+var rata = player.health/player.maxHealth
 
 // events
 {
@@ -1086,6 +1095,16 @@ function render() {
 		context.fillText("C to toggle this information", canvas.width, height*4)
 		context.textBaseline = "alphabetic"	
 	}
+
+	//draw health
+	{
+		let width = size/4
+		let height = width*1.75
+		context.drawImage(battery,canvas.width-width,canvas.height-height,width,height)
+		rata = lerp(rata,player.health/player.maxHealth,0.1)
+		context.fillStyle = "#"+Math.floor(lerp(255,16,rata)).toString(16)+Math.floor(lerp(16,255,rata)).toString(16)+"00"
+		context.fillRect(canvas.width-width+width/16*3,canvas.height-height/28*3,width/16*10,-rata*height/28*21)
+	}
 }
 
 function update() {
@@ -1094,7 +1113,7 @@ function update() {
 	Boffset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2+size/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2+size/2,camSpeed)}
   offset.x = Boffset.x+(Math.random()*2-1)*shake
   offset.y = Boffset.y+(Math.random()*2-1)*shake
-	// console.log(shake)
+
 	//move player
 	{
 		if (db) shootCount++
@@ -1116,8 +1135,14 @@ function update() {
 		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
 		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
 
-		if (getRoom(curRoom).abilty != null && enemys.length == 0 && keys[32]) {
-			getRoom(curRoom).interact()
+		if (keys[32]) {
+			if (getRoom(curRoom).abilty != null && enemys.length == 0) {
+				getRoom(curRoom).interact()
+			} else {
+				player.position.vx += Math.sin(Math.PI/2*player.dir)*50
+
+				player.position.vy -= Math.cos(Math.PI/2*player.dir)*50
+			}
 		}
 
 		if (keys[32] && getRoom(curRoom)) if (getRoom(curRoom).exit == -1) {
@@ -1181,6 +1206,14 @@ function update() {
 			curRoom.x = Math.floor(player.position.x/size)
 			curRoom.y = Math.floor(player.position.y/size)
 
+		}
+		if (player.vx >= 0.01) {
+			player.vx = lerp(player.vx,0,0.1)
+			player.position.x+=player.vx
+		}
+		if (player.vy >= 0.01) {
+			player.vy = lerp(player.vy,0,0.1)
+			player.position.y+=player.vy
 		}
 	}
 
