@@ -668,6 +668,7 @@ var cycleDelay = Math.floor(1000 / FPS);
 var oldCycleTime = 0;
 var cycleCount = 0;
 var fps_rate = '...';
+var cursor =  new vector2();
 var mouse =  new vector2();
 var floor = 1
 var bullets = []
@@ -742,8 +743,8 @@ var rata = player.health/player.maxHealth
 	});
 
 	document.addEventListener("mousemove", (event) => {
-		mouse.x = event.x
-		mouse.y = event.y
+		cursor.x = event.x
+		cursor.y = event.y
 	});
 
 	document.addEventListener('keydown', function(event) {
@@ -1105,6 +1106,14 @@ function render() {
 		context.fillStyle = "#"+Math.floor(lerp(255,16,rata)).toString(16)+Math.floor(lerp(16,255,rata)).toString(16)+"00"
 		context.fillRect(canvas.width-width+width/16*3,canvas.height-height/28*3,width/16*10,-rata*height/28*21)
 	}
+
+	//draw cursor
+	{
+		context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+		context.beginPath();
+		context.arc(mouse.x, mouse.y, size/40, 0, DOUBLE_PI);
+		context.fill();
+	}
 }
 
 function update() {
@@ -1113,6 +1122,36 @@ function update() {
 	Boffset = {x:lerp(offset.x,curRoom.x*size-canvas.width/2+size/2,camSpeed),y:lerp(offset.y,curRoom.y*size-canvas.height/2+size/2,camSpeed)}
   offset.x = Boffset.x+(Math.random()*2-1)*shake
   offset.y = Boffset.y+(Math.random()*2-1)*shake
+
+  //mouse update
+  {
+  	let centX = canvas.width/2
+  	let centY = canvas.height/2
+  	let dx = {x:mouse.x,y:mouse.y}
+  	mouse = cursor
+	  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+	  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+	  let bulRoom = {x:Math.floor((mouse.x-canvas.width/2+size/2+curRoom.x*size)/size),y:Math.floor((mouse.y-canvas.height/2+size/2+curRoom.y*size)/size)}
+	  console.log(bulRoom.x)
+		let curCRoom = getRoom(bulRoom)
+		if(curCRoom == null){
+				mouse = dx
+		} else {
+			let main = (mouse.x-canvas.width/2+size/2+curRoom.x*size >= curCRoom.position.x*size+size*0.05 && mouse.x-canvas.width/2+size/2+curRoom.x*size <= curCRoom.position.x*size+size-size*0.05 && mouse.y-canvas.height/2+size/2+curRoom.y*size >= curCRoom.position.y*size+size*0.05 && mouse.y-canvas.height/2+size/2+curRoom.y*size <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && mouse.x-canvas.width/2+size/2+curRoom.x*size <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && mouse.x-canvas.width/2+size/2+curRoom.x*size >= positions[curCRoom.entr].x+curCRoom.position.x*size && mouse.y-canvas.height/2+size/2+curRoom.y*size >= positions[curCRoom.entr].y+curCRoom.position.y*size && mouse.y-canvas.height/2+size/2+curRoom.y*size <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && mouse.x-canvas.width/2+size/2+curRoom.x*size <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && mouse.x-canvas.width/2+size/2+curRoom.x*size >= positions[curCRoom.exit].x+curCRoom.position.x*size && mouse.y-canvas.height/2+size/2+curRoom.y*size >= positions[curCRoom.exit].y+curCRoom.position.y*size && mouse.y-canvas.height/2+size/2+curRoom.y*size <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+
+			if (!(exit || main || entr)) {
+				mouse = dx
+			}
+		}
+  }
 
 	//move player
 	{
