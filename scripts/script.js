@@ -993,6 +993,7 @@ function drawZigzagLine(canvas, x1, y1, x2, y2) {
     }
     ctx.lineWidth = 4;
     ctx.strokeStyle = "#1BCFFF";
+		if (db) context.fillStyle  = "#FF6F4B";
     ctx.stroke();
     ctx.closePath();
     ctx.beginPath();
@@ -1011,6 +1012,7 @@ function drawZigzagLine(canvas, x1, y1, x2, y2) {
     }
     ctx.lineWidth = 4;
     ctx.strokeStyle = "#9DFAFF";
+		if (db) context.strokeStyle  = "#FF3F1B";
     ctx.stroke();
     ctx.closePath();
     ctx.globalAlpha = 1
@@ -1155,7 +1157,7 @@ function render() {
 		context.fillStyle = "#ffffff"
 		let height = context.measureText("M").width * 1.6
 		context.fillText("WASD to move", canvas.width, 0)
-		context.fillText("Arrow keys to shoot", canvas.width, height)
+		context.fillText("Click to shoot", canvas.width, height)
 		context.fillText("Space to interact with room", canvas.width, height*2)
 		context.fillText("Esc to pause the game", canvas.width, height*3)
 		context.fillText("C to toggle this information", canvas.width, height*4)
@@ -1176,10 +1178,12 @@ function render() {
 	//draw cursor
 	{
 		context.fillStyle = "#9DFAFF";
+		if (db) context.fillStyle  = "#FF6F4B";
 		context.beginPath();
 		context.arc(mouse.x, mouse.y, size/80, 0, DOUBLE_PI);
 		context.fill();
 		context.strokeStyle  = "#1BCFFF";
+		if (db) context.strokeStyle  = "#FF3F1B";
 		context.lineWidth = 2
 		context.beginPath();
 		context.arc(mouse.x, mouse.y, size/80, 0, DOUBLE_PI);
@@ -1241,10 +1245,10 @@ function update() {
 		if (keys[65]) player.strafe -= 1
 		if (player.strafe != 0 && player.move != 0) {player.strafe /= 1.5; player.move /= 1.5}
 
-		if (keys[38] && !db) {db = true; bullets.push(new bullet(0,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 0}
-		if (keys[39] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 1}
-		if (keys[40] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
-		if (keys[37] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
+		// if (keys[38] && !db) {db = true; bullets.push(new bullet(0,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 0}
+		// if (keys[39] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 1}
+		// if (keys[40] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
+		// if (keys[37] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
 
 		if (keys[32]) {
 			if (getRoom(curRoom).abilty != null && enemys.length == 0) {
