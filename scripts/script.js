@@ -95,10 +95,10 @@ class runner {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			if (randInt(1,100) >= player.doge*2)player.health -= 2-player.restance/10
-			shake+=1
+			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
+			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
+			if (randInt(1,100) >= player.doge*2) player.health -= 25-player.restance/10
+			shake+=10
 		}
 	}
 
@@ -269,7 +269,7 @@ class shooter {
 		if (this.canShoot) {
 			this.canShoot = !this.canShoot
 
-			var a = bullets.push(new bullet(this.side,"enemy"))
+			var a = bullets.push(new bullet(this.side-1,"enemy"))
 			bullets[a-1].position.x = this.position.x
 			bullets[a-1].position.y = this.position.y
 			new Audio("assests/audio/shoot.mp3").play()
@@ -338,10 +338,10 @@ class blocker {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
+			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
 			shake += 1
-			if (randInt(1,100) >= player.doge*2) player.health -= 5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 50-player.restance/10
 		}
 	}
 
@@ -400,7 +400,7 @@ class controller {
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
 			shake += 5
-			if (randInt(1,100) >= player.doge*2) player.health -= 50-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 100-player.restance/10
 		}
 	}
 
@@ -486,10 +486,10 @@ class doger {
 			this.position.x -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 			this.position.y -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed
 		} else {
-			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
-			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))/16*this.speed/4
+			player.vx -= Math.sin(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
+			player.vy -= Math.cos(Math.atan2(this.position.x - player.position.x,this.position.y - player.position.y))*this.speed/4
 			shake += 1
-			if (randInt(1,100) >= player.doge*2) player.health -= 5-player.restance/10
+			if (randInt(1,100) >= player.doge*2) player.health -= 50-player.restance/10
 		}		
 	}
 
@@ -561,20 +561,20 @@ class Player {
 		this.restance = 0
 		this.img = new Image();
 		this.img.src = "assests/images/player.png";
-		this.dir = 0
+		this.dir = randInt(0,3)
 	}
 }
 
 class bullet {
 	constructor (direction,type) {
 		this.position = new vector2(player.position.x,player.position.y)
-		this.direction = direction
+		this.direction = direction+1
 		this.type = type
 		this.speed = size/40
 	}
 
 	render() {
-		context.fillStyle = 'Green';
+		context.fillStyle = '#9DFAFF';
 		context.beginPath();
     context.arc(this.position.x - offset.x, this.position.y - offset.y , size/80, 0, DOUBLE_PI);
     context.fill();
@@ -668,8 +668,8 @@ var cycleDelay = Math.floor(1000 / FPS);
 var oldCycleTime = 0;
 var cycleCount = 0;
 var fps_rate = '...';
-var cursor =  new vector2();
-var mouse =  new vector2();
+var cursor =  new vector2(canvas.width/2,canvas.height/2);
+var mouse =  new vector2(canvas.width/2,canvas.height/2);
 var floor = 1
 var bullets = []
 var keys = []
@@ -712,7 +712,7 @@ var rata = player.health/player.maxHealth
 			}
 			if (menuState == 2) {
 				for (let i = 1; i <= shopItems.length; i++) {
-			    if (mouse.x - (canvas.width/2-500) < i * (1000/shopItems.length) ) {
+			    if (cursor.x - (canvas.width/2-500) < i * (1000/shopItems.length) ) {
 			    	if (player.curency >= shopItems[i-1].price*(shopItems[i-1].timesBought+1) && shopItems[i-1].timesBought < shopItems[i-1].max) {
 			        player.curency -= shopItems[i-1].price*(shopItems[i-1].timesBought+1)
 			        shopItems[i-1].timesBought++
@@ -738,8 +738,23 @@ var rata = player.health/player.maxHealth
 						break
 			    }
 				} 
+			} 
+		} else {
+      var di = 9999999999
+			var a = 0
+			let poses = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
+			for (let v of range(0,3)) {
+
+		    let cd = (((player.position.x+poses[v].x)-offset.x-mouse.x)**2+((player.position.y+poses[v].y)-offset.y-mouse.y)**2)**0.5
+		    if (cd <= di) {
+		        di = cd
+		        a = v
+		    }
+
 			}
-		} 
+			if (!db) {db = true; bullets.push(new bullet(a,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = a}
+
+		}
 	});
 
 	document.addEventListener("mousemove", (event) => {
@@ -923,7 +938,7 @@ function generateRoom(oldRoom) {
 	      break
 	    }
 	  }	
-	  if (randInt(1,2)==1 && floor != 1) {
+	  if (randInt(1,5)==1 && floor != 1) {
 	  	let chances = [5,5,5,1,1,1]
 	  	let abitlys = ["+regen","+doge chance","+restance","++regen","++doge chance","++restance"]
 	  	abilty = weighted_random(abitlys,chances)
@@ -949,6 +964,56 @@ function getRoom(position) {
 		}
 	}
 	return null
+}
+
+function drawZigzagLine(canvas, x1, y1, x2, y2) {
+    var ctx = canvas.getContext("2d");
+    // var amplitude = randInt(1,6);
+    var period = 3;
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var distance = Math.sqrt(dx*dx + dy*dy)/2;
+    var angle = Math.atan2(dy, dx);
+    var xStep = Math.cos(angle);
+    var yStep = Math.sin(angle);
+    var x = x1;
+    var y = y1;
+    var i = 0;
+    ctx.globalAlpha = 0.1
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    while (i < distance) {
+        x += xStep * period;
+        y += yStep * period;
+        ctx.lineTo(x + randInt(1,3) * -yStep, y + randInt(1,3) * xStep);
+        x += xStep * period;
+        y += yStep * period;
+        ctx.lineTo(x - randInt(1,3) * -yStep, y - randInt(1,3) * xStep);
+        i += period;
+    }
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#1BCFFF";
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    x = x1;
+    y = y1;
+    ctx.moveTo(x, y);
+    i = 0;
+    while (i < distance) {
+        x += xStep * period;
+        y += yStep * period;
+        ctx.lineTo(x + randInt(1,3) * -yStep, y + randInt(1,3) * xStep);
+        x += xStep * period;
+        y += yStep * period;
+        ctx.lineTo(x - randInt(1,3) * -yStep, y - randInt(1,3) * xStep);
+        i += period;
+    }
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#9DFAFF";
+    ctx.stroke();
+    ctx.closePath();
+    ctx.globalAlpha = 1
 }
 
 function render() {
@@ -1094,6 +1159,7 @@ function render() {
 		context.fillText("Space to interact with room", canvas.width, height*2)
 		context.fillText("Esc to pause the game", canvas.width, height*3)
 		context.fillText("C to toggle this information", canvas.width, height*4)
+		context.fillText("V if your mouse is stuck", canvas.width, height*5)
 		context.textBaseline = "alphabetic"	
 	}
 
@@ -1109,10 +1175,17 @@ function render() {
 
 	//draw cursor
 	{
-		context.fillStyle = "#"+Math.floor(lerp(255,16,player.health/player.maxHealth)).toString(16)+Math.floor(lerp(16,255,player.health/player.maxHealth)).toString(16)+"00";
+		context.fillStyle = "#9DFAFF";
 		context.beginPath();
-		context.arc(mouse.x, mouse.y, size/40, 0, DOUBLE_PI);
+		context.arc(mouse.x, mouse.y, size/80, 0, DOUBLE_PI);
 		context.fill();
+		context.strokeStyle  = "#1BCFFF";
+		context.lineWidth = 2
+		context.beginPath();
+		context.arc(mouse.x, mouse.y, size/80, 0, DOUBLE_PI);
+		context.stroke();
+
+		drawZigzagLine(canvas,player.position.x-offset.x, player.position.y-offset.y,mouse.x, mouse.y)
 	}
 }
 
@@ -1128,11 +1201,10 @@ function update() {
   	let centX = canvas.width/2
   	let centY = canvas.height/2
   	let dx = {x:mouse.x,y:mouse.y}
-  	mouse = cursor
+  	mouse = lerpV2(mouse,cursor,0.2)
 	  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
 	  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
 	  let bulRoom = {x:Math.floor((mouse.x-canvas.width/2+size/2+curRoom.x*size)/size),y:Math.floor((mouse.y-canvas.height/2+size/2+curRoom.y*size)/size)}
-	  console.log(bulRoom.x)
 		let curCRoom = getRoom(bulRoom)
 		if(curCRoom == null){
 				mouse = dx
@@ -1169,10 +1241,10 @@ function update() {
 		if (keys[65]) player.strafe -= 1
 		if (player.strafe != 0 && player.move != 0) {player.strafe /= 1.5; player.move /= 1.5}
 
-		if (keys[38] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 0}
-		if (keys[39] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 1}
-		if (keys[40] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
-		if (keys[37] && !db) {db = true; bullets.push(new bullet(4,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
+		if (keys[38] && !db) {db = true; bullets.push(new bullet(0,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 0}
+		if (keys[39] && !db) {db = true; bullets.push(new bullet(1,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 1}
+		if (keys[40] && !db) {db = true; bullets.push(new bullet(2,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 2}
+		if (keys[37] && !db) {db = true; bullets.push(new bullet(3,"player")); shake+=1; new Audio("assests/audio/shoot.mp3").play(); player.dir = 3}
 
 		if (keys[32]) {
 			if (getRoom(curRoom).abilty != null && enemys.length == 0) {
@@ -1183,6 +1255,8 @@ function update() {
 				player.position.vy -= Math.cos(Math.PI/2*player.dir)*50
 			}
 		}
+
+		if (keys[86]) {mouse =  new vector2(canvas.width/2,canvas.height/2)}
 
 		if (keys[32] && getRoom(curRoom)) if (getRoom(curRoom).exit == -1) {
 			nextFloor()
@@ -1246,13 +1320,61 @@ function update() {
 			curRoom.y = Math.floor(player.position.y/size)
 
 		}
-		if (player.vx >= 0.01) {
+		if (Math.abs(player.vx) >= 0.01) {
 			player.vx = lerp(player.vx,0,0.1)
 			player.position.x+=player.vx
+
+		  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+		  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+			let curCRoom = getRoom(curRoom)
+			if(curCRoom == null){
+				curCRoom = generateRoom(map[map.length-1])
+			}
+			let main = (player.position.x >= curCRoom.position.x*size+size*0.05 && player.position.x <= curCRoom.position.x*size+size-size*0.05 && player.position.y >= curCRoom.position.y*size+size*0.05 && player.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && player.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && player.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && player.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && player.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+
+			if (!(exit || main || entr)) {
+				player.position.x-=player.vx
+			}
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
 		}
-		if (player.vy >= 0.01) {
+		if (Math.abs(player.vy) >= 0.01) {
 			player.vy = lerp(player.vy,0,0.1)
 			player.position.y+=player.vy
+
+		  let positions = [{x:size/2-size*0.05,y:0},{x:size-size*0.05,y:size/2-size*0.05},{x:size/2-size*0.05,y:size-size*0.05},{x:0,y:size/2-size*0.05}]
+		  let sizes = [{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1},{x:size*0.1,y:size*0.05},{x:size*0.05,y:size*0.1}]
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
+			let curCRoom = getRoom(curRoom)
+			if(curCRoom == null){
+				curCRoom = generateRoom(map[map.length-1])
+			}
+			let main = (player.position.x >= curCRoom.position.x*size+size*0.05 && player.position.x <= curCRoom.position.x*size+size-size*0.05 && player.position.y >= curCRoom.position.y*size+size*0.05 && player.position.y <= curCRoom.position.y*size+size-size*0.05)
+			let entr = (curCRoom.entr != -1 && player.position.x <= positions[curCRoom.entr].x+curCRoom.position.x*size+sizes[curCRoom.entr].x  && player.position.x >= positions[curCRoom.entr].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.entr].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.entr].y+curCRoom.position.y*size+sizes[curCRoom.entr].y)
+			let exit = (curCRoom.exit != -1 && player.position.x <= positions[curCRoom.exit].x+curCRoom.position.x*size+sizes[curCRoom.exit].x  && player.position.x >= positions[curCRoom.exit].x+curCRoom.position.x*size && player.position.y >= positions[curCRoom.exit].y+curCRoom.position.y*size && player.position.y <= positions[curCRoom.exit].y+curCRoom.position.y*size+sizes[curCRoom.exit].y)
+			
+			if (enemys.length != 0 && exit == true) {
+				entr = false
+				main = false
+				exit = false
+			} 
+
+			if (!(exit || main || entr)) {
+				player.position.y-=player.vy
+			}
+			curRoom.x = Math.floor(player.position.x/size)
+			curRoom.y = Math.floor(player.position.y/size)
 		}
 	}
 
@@ -1444,13 +1566,13 @@ function gameLoop() {
 			context.textAlign = "start"
 		}
 
-		if (mouse.x >= canvas.width/2-500 && mouse.x <= canvas.width/2+500) {
-			scrollMenu1 = mouse.x
+		if (cursor.x >= canvas.width/2-500 && cursor.x <= canvas.width/2+500) {
+			scrollMenu1 = cursor.x
 		} else
-		if(mouse.x >= canvas.width/2-500) {
+		if(cursor.x >= canvas.width/2-500) {
 			scrollMenu1 = canvas.width/2+500
 		} else 
-		if(mouse.x <= canvas.width/2+500) {
+		if(cursor.x <= canvas.width/2+500) {
 			scrollMenu1 = canvas.width/2-500
 		}
 
@@ -1494,5 +1616,8 @@ function gameLoop() {
 window.onload = function() {
 	console.log("loaded"); 
 	sessionStorage.setItem("weights", JSON.stringify(chances));
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+	mouse =  new vector2(canvas.width/2,canvas.height/2)
 	gameLoop()
 }
